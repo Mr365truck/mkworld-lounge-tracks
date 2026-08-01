@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block title %}Settings — mogi-tracker{% endblock %}
+
+{% block headeractions %}
+  <a href="/export/db.json" class="btn-ghost h-8 px-2.5 text-xs">Export JSON</a>
+  <a href="/export/races.csv" class="btn h-8 px-3 text-sm">Export CSV</a>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 grid gap-3 sm:grid-cols-3">
+  <div class="card px-3 py-2.5">
+    <div class="text-[11px] uppercase tracking-wide text-ink-500">Database</div>
+    <div class="mt-0.5 truncate font-mono text-xs text-ink-300" title="{{ db_path }}">{{ db_path }}</div>
+  </div>
+  <div class="card px-3 py-2.5">
+    <div class="text-[11px] uppercase tracking-wide text-ink-500">Timezone</div>
+    <div class="mt-0.5 font-mono text-xs text-ink-300">{{ tz }}</div>
+  </div>
+  <div class="card px-3 py-2.5">
+    <div class="text-[11px] uppercase tracking-wide text-ink-500">Tracks</div>
+    <div class="mt-0.5 text-xs text-ink-300">{{ tracks|length }} courses, {{ tracks|map(attribute='aliases')|map('length')|sum }} aliases</div>
+  </div>
+</div>
+
+{# ------------------------------------------------------------- review queue #}
+<section id="issues" class="card mb-5 overflow-hidden">
+  <div class="flex items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+    <h2 class="font-medium">Import review queue</h2>
+    <span class="text-xs text-ink-500">anything the importer could not resolve cleanly lands here</span>
+    <span class="ml-auto text-xs {{ 'text-warn-400' if issues else 'text-ink-600' }}">{{ issues|length }} open</span>
+  </div>
+  {% if issues %}
+  <table class="w-full text-sm">
+    <tbody>
+      {% for i in issues %}
+      <tr class="border-b border-ink-900 last:border-0" data-issue="{{ i.id }}">
+        <td class="px-3 py-1.5 w-32"><span class="chip-muted">{{ i.kind }}</span></td>
+        <td class="px-3 py-1.5 text-ink-400">
+          {% if i.session_id %}<a href="/sessions/{{ i.session_id }}" class="text-accent-400 hover:underline">session {{ i.session_id }}</a>{% endif %}
+          {% if i.race_num %}<span class="text-ink-600">· race {{ i.race_num }}</span>{% endif %}
+        </td>
+        <td class="px-3 py-1.5 text-ink-300">{{ i.detail }}{% if i.raw %} <span class="font-mono text-xs text-ink-500">{{ i.raw }}</span>{% endif %}</td>
+        <td class="px-3 py-1.5 text-right">
+          <button class="btn-ghost h-6 px-2 text-xs resolve-issue" data-id="{{ i.id }}">Resolve</button>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="px-3 py-6 text-center text-sm text-ink-500">Nothing outstanding.</p>
+  {% endif %}
+</section>
+
+{# ------------------------------------------------------------------ tracks #}
+<section class="card overflow-hidden">
+  <div class="flex flex-wrap items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+    <h2 class="font-medium">Tracks &amp; aliases</h2>
+    <p class="text-xs text-ink-500">
+      <span class="font-mono">cut</span> controls whether the shortcut field renders during entry.
+      <span class="font-mono">P1</span> flags feed the lead-defensibility analytic.
+    </p>
+  </div>
+  <div class="overflow-x-auto">
+  <table class="w-full min-w-[900px] text-sm">
+    <thead>
+      <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+        <th class="px-3 py-2 font-medium">Code</th>
+        <th class="px-3 py-2 font-medium">Name</th>
+        <th class="px-3 py-2 text-center font-medium">Retro</th>
+        <th class="px-3 py-2 text-center font-medium" title="has_gate">Cut</th>
+        <th class="px-3 py-2 text-center font-medium" title="good_from_first">P1</th>
+        <th class="px-3 py-2 text-center font-medium" title="good_from_first_if_shrooms">P1+🍄</th>
+        <th class="px-3 py-2 text-right font-medium">Picks</th>
+        <th class="px-3 py-2 font-medium">Aliases</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in tracks %}
+      <tr class="border-b border-ink-900 last:border-0 hover:bg-ink-900/50" data-track="{{ t.id }}">
+        <td class="px-3 py-1.5 font-mono text-xs text-accent-300">{{ t.code }}</td>
+        <td class="px-3 py-1.5 text-ink-200">{{ t.full_name }}</td>
+        <td class="px-3 py-1.5 text-center"><input type="checkbox" class="accent-accent-500 tflag" data-flag="is_retro" {{ 'checked' if t.is_retro }}></td>
+        <td class="px-3 py-1.5 text-center"><input type="checkbox" class="accent-accent-500 tflag" data-flag="has_gate" {{ 'checked' if t.has_gate }}></td>
+        <td class="px-3 py-1.5 text-center"><input type="checkbox" class="accent-accent-500 tflag" data-flag="good_from_first" {{ 'checked' if t.good_from_first }}></td>
+        <td class="px-3 py-1.5 text-center"><input type="checkbox" class="accent-accent-500 tflag" data-flag="good_from_first_if_shrooms" {{ 'checked' if t.good_from_first_if_shrooms }}></td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-500">{{ t.picks }}</td>
+        <td class="px-3 py-1.5">
+          <div class="flex flex-wrap items-center gap-1">
+            {% for al in t.aliases %}<span class="chip-muted font-mono text-[10px]">{{ al }}</span>{% endfor %}
+            <input class="alias-add h-6 w-24 rounded border border-ink-800 bg-transparent px-1.5 text-[11px] text-ink-300 placeholder:text-ink-700 focus:border-accent-500 focus:outline-none"
+                   placeholder="+ alias" data-track="{{ t.id }}">
+          </div>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="border-t border-ink-800 px-3 py-2 text-xs text-ink-600">
+    Codes are provisional — Appendix A's open questions (<span class="font-mono">rMC</span> vs
+    <span class="font-mono">MC</span>, the inconsistent <span class="font-mono">r</span> prefix,
+    Rainbow Road's retro flag) are unresolved. Aliases are rows, not schema, so renaming a
+    canonical code later is a data edit rather than a migration.
+  </p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('change', async (e) => {
+  const el = e.target;
+  if (el.classList.contains('tflag')) {
+    const id = el.closest('[data-track]').dataset.track;
+    await fetch(`/api/tracks/${id}`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ [el.dataset.flag]: el.checked }),
+    });
+  }
+});
+document.addEventListener('keydown', async (e) => {
+  const el = e.target;
+  if (el.classList.contains('alias-add') && e.key === 'Enter') {
+    e.preventDefault();
+    const res = await fetch(`/api/tracks/${el.dataset.track}/aliases`, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ alias: el.value.trim() }),
+    });
+    if (res.ok) location.reload();
+    else { const j = await res.json().catch(() => ({})); alert(j.detail || 'could not add alias'); }
+  }
+});
+document.addEventListener('click', async (e) => {
+  const btn = e.target.closest('.resolve-issue');
+  if (!btn) return;
+  await fetch(`/api/import-issues/${btn.dataset.id}/resolve`, { method: 'POST' });
+  btn.closest('tr').remove();
+});
+</script>
+{% endblock %}

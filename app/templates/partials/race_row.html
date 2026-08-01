@@ -1,0 +1,51 @@
+{# One race. Field order is the tab order: track -> place -> start -> lap1 ->
+   cut -> mate -> note. `variant` sits at the right edge with tabindex="-1" so it
+   never costs a tab stop on the ~99% of races that are ordinary 3-lap races. #}
+<div class="race-row" data-race="{{ r.race_num }}" data-variant="{{ r.variant }}">
+  <span class="race-num">{{ r.race_num }}</span>
+
+  <div class="relative min-w-[10rem] flex-1">
+    <input class="field track-input w-full" data-field="track_id" autocomplete="off"
+           spellcheck="false" autocapitalize="off" placeholder="track"
+           value="{{ r.code or '' }}" data-track-id="{{ r.track_id or '' }}">
+    <div class="track-menu hidden"></div>
+    <span class="track-name">{{ r.full_name or '' }}</span>
+  </div>
+
+  <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="placement"
+         value="{{ r.placement if r.placement is not none else '' }}" placeholder="place" aria-label="placement">
+  <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="start_position"
+         value="{{ r.start_position if r.start_position is not none else '' }}" placeholder="start" aria-label="start position">
+  <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="lap1_position"
+         value="{{ r.lap1_position if r.lap1_position is not none else '' }}" placeholder="lap1" aria-label="lap 1 position">
+
+  {# Rendered only for gate tracks — four of thirty. Showing it on the other 26 is
+     what would make it too expensive to actually log. #}
+  <div class="cut-cell w-16 {{ '' if r.has_gate else 'invisible' }}">
+    <select class="field w-full px-1 text-center text-xs" data-field="shortcut_hit"
+            aria-label="shortcut" {{ '' if r.has_gate else 'disabled' }}>
+      <option value="" {{ 'selected' if r.shortcut_hit is none }}>—</option>
+      <option value="hit"  {{ 'selected' if r.shortcut_hit == 'hit' }}>hit</option>
+      <option value="miss" {{ 'selected' if r.shortcut_hit == 'miss' }}>miss</option>
+      <option value="na"   {{ 'selected' if r.shortcut_hit == 'na' }}>n/a</option>
+    </select>
+  </div>
+
+  {% if is_team %}
+  <input type="text" inputmode="numeric" class="field w-14 text-center" data-field="mate_placement"
+         value="{{ r.mate_placement if r.mate_placement is not none else '' }}" aria-label="mate placement">
+  {% endif %}
+
+  {# Capped: the note is used on a small minority of races and should not be the
+     widest thing on the row. #}
+  <input type="text" class="field min-w-[6rem] flex-1 text-sm sm:max-w-[20rem]" data-field="note"
+         value="{{ r.note or '' }}" placeholder="note" aria-label="note">
+
+  <div class="ml-auto flex w-24 items-center justify-end gap-1.5 sm:ml-0">
+    <span class="row-dot" title="saved"></span>
+    <select class="variant-select" data-field="variant" tabindex="-1" aria-label="variant">
+      <option value="3lap" {{ 'selected' if r.variant == '3lap' }}>3lap</option>
+      <option value="intermission" {{ 'selected' if r.variant == 'intermission' }}>inter</option>
+    </select>
+  </div>
+</div>

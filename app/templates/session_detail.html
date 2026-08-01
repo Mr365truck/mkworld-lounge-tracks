@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}{{ played_local.strftime('%-d %b') }} {{ session.format }} — mogi-tracker{% endblock %}
+
+{% block headeractions %}
+  <span id="save-state" class="hidden items-center gap-1.5 text-xs text-ink-500">
+    <span class="h-1.5 w-1.5 rounded-full bg-warn-400"></span><span id="save-label">saving…</span>
+  </span>
+  <a href="/sessions/{{ session.id }}/delete" class="btn-ghost h-8 px-2.5 text-xs text-ink-500 hover:text-bad-400">Delete</a>
+  <a href="/" class="btn h-8 px-3 text-sm">Done</a>
+{% endblock %}
+
+{% block content %}
+<div id="session-root" data-session="{{ session.id }}" data-team="{{ 1 if is_team else 0 }}">
+
+  {# ---------------------------------------------------------------- header #}
+  <div class="card mb-4 p-3 sm:p-4">
+    <div class="flex flex-wrap items-end gap-x-4 gap-y-3">
+      <label class="block">
+        <span class="lbl">Played</span>
+        <input type="datetime-local" class="field w-[13rem]" data-sfield="played_at"
+               value="{{ played_local.strftime('%Y-%m-%dT%H:%M') }}">
+      </label>
+      <label class="block">
+        <span class="lbl">Format</span>
+        <select class="field w-24" data-sfield="format">
+          {% for f in formats %}<option value="{{ f }}" {{ 'selected' if f == session.format }}>{{ f }}</option>{% endfor %}
+        </select>
+      </label>
+      <label class="block">
+        <span class="lbl">Races</span>
+        <input type="text" inputmode="numeric" class="field w-16 text-right" data-sfield="expected_races"
+               value="{{ session.expected_races }}">
+      </label>
+
+      <div class="h-9 w-px bg-ink-800"></div>
+
+      {% for key, label in [('room_min_mmr','Min'), ('room_max_mmr','Max'), ('room_avg_mmr','Avg')] %}
+      <label class="block">
+        <span class="lbl">{{ label }} MMR</span>
+        <input type="text" inputmode="numeric" class="field w-20 text-right" data-sfield="{{ key }}"
+               value="{{ session[key] if session[key] is not none else '' }}">
+      </label>
+      {% endfor %}
+      <label class="block">
+        <span class="lbl">Seat</span>
+        <input type="text" inputmode="numeric" class="field w-14 text-right" data-sfield="seat"
+               value="{{ session.seat if session.seat is not none else '' }}">
+      </label>
+      {% if is_team %}
+      <label class="block">
+        <span class="lbl">Mate MMR</span>
+        <input type="text" inputmode="numeric" class="field w-20 text-right" data-sfield="mate_mmr"
+               value="{{ session.mate_mmr if session.mate_mmr is not none else '' }}">
+      </label>
+      {% endif %}
+
+      <div class="h-9 w-px bg-ink-800"></div>
+
+      {% for key, label in [('own_mmr_before','MMR before'), ('mmr_delta','MMR Δ'), ('score','Score')] %}
+      <label class="block">
+        <span class="lbl">{{ label }}</span>
+        <input type="text" inputmode="numeric" class="field w-20 text-right" data-sfield="{{ key }}"
+               value="{{ session[key] if session[key] is not none else '' }}">
+      </label>
+      {% endfor %}
+
+      {# The one control that resolves a session the app would otherwise flag as
+         incomplete forever, so it sits next to the completeness indicator. #}
+      <label class="ml-auto flex cursor-pointer select-none items-center gap-2 rounded-lg border border-ink-800 px-3 py-2">
+        <input type="checkbox" class="accent-warn-500" data-sfield="aborted" {{ 'checked' if session.aborted }}>
+        <span class="text-sm text-ink-300">Aborted</span>
+      </label>
+    </div>
+
+    <div class="mt-3 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-ink-800 pt-3">
+      <div class="flex items-baseline gap-2">
+        <span class="lbl mb-0">Running average</span>
+        <span id="running-avg" class="text-xl font-semibold tabular-nums
+              {% if stats.avg_placement is not none and stats.avg_placement <= 6.5 %}text-good-400{% elif stats.avg_placement is not none %}text-warn-400{% else %}text-ink-600{% endif %}">
+          {{ stats.avg_placement | num }}
+        </span>
+      </div>
+      <div class="flex items-baseline gap-2">
+        <span class="lbl mb-0">Logged</span>
+        <span id="logged-count" class="tabular-nums text-ink-300">{{ stats.placements_recorded }}/{{ stats.expected_races }}</span>
+      </div>
+      <span id="complete-chip" class="{{ 'chip-good' if stats.is_complete else 'chip-warn' }}">
+        {{ 'complete' if stats.is_complete else (stats.missing ~ ' missing') }}
+      </span>
+      <input type="text" class="field ml-auto min-w-[14rem] flex-1 text-sm" data-sfield="notes"
+             placeholder="Session notes" value="{{ session.notes or '' }}">
+    </div>
+  </div>
+
+  {% if issues %}
+  <details class="card mb-4 px-3 py-2 text-sm">
+    <summary class="cursor-pointer text-warn-300">{{ issues|length }} import note{{ '' if issues|length == 1 else 's' }} on this session</summary>
+    <ul class="mt-2 space-y-1 text-xs text-ink-400">
+      {% for i in issues %}
+        <li><span class="chip-muted mr-1">{{ i.kind }}</span>{% if i.race_num %}race {{ i.race_num }}: {% endif %}{{ i.detail }}</li>
+      {% endfor %}
+    </ul>
+  </details>
+  {% endif %}
+
+  {# ------------------------------------------------------------- race rows #}
+  <div class="card overflow-hidden">
+    <div class="hidden border-b border-ink-800 px-3 py-1.5 text-[11px] uppercase tracking-wide text-ink-500 sm:flex sm:items-center sm:gap-2">
+      <span class="w-7 text-center">#</span>
+      <span class="min-w-[10rem] flex-1">Track</span>
+      <span class="w-14 text-center">Place</span>
+      <span class="w-14 text-center">Start</span>
+      <span class="w-14 text-center">Lap 1</span>
+      <span class="w-16 text-center">Cut</span>
+      {% if is_team %}<span class="w-14 text-center">Mate</span>{% endif %}
+      <span class="min-w-[6rem] flex-1">Note</span>
+      <span class="w-24 text-right">Variant</span>
+    </div>
+
+    <div id="race-rows">
+      {% for r in races %}
+        {% include "partials/race_row.html" %}
+      {% endfor %}
+    </div>
+
+    <div class="flex items-center gap-2 border-t border-ink-800 px-3 py-2">
+      <button id="add-race" class="btn-ghost h-7 px-2 text-xs">+ race</button>
+      <button id="drop-race" class="btn-ghost h-7 px-2 text-xs text-ink-500">− last</button>
+      <span class="ml-auto text-xs text-ink-600">
+        Tab across fields · Enter to the next race · <kbd class="kbd">Alt</kbd>+<kbd class="kbd">I</kbd> toggles intermission
+      </span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/entry.js" defer></script>
+{% endblock %}

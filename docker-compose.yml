@@ -1,0 +1,40 @@
+# TrueNAS SCALE Custom App — paste this into Apps > Discover > Custom App >
+# Install via YAML. No SSH needed.
+#
+# There is deliberately no `build:` directive. The Install-via-YAML screen is built
+# around pulling: it exposes Image Repository, Image Tag, and Image Pull Policy, and
+# has nowhere to run a build. GitHub Actions builds the image and pushes it to GHCR
+# (.github/workflows/publish.yml); the NAS pulls the tag below.
+#
+# Before installing:
+#   1. Create a dataset for the database, e.g. tank/apps/mogi-tracker.
+#   2. Set that dataset's Record Size to 16K. The 128K default causes write
+#      amplification on SQLite's small random writes. Both are settable in the UI.
+#   3. Point the volume below at the dataset's path.
+services:
+  mogi-tracker:
+    image: ghcr.io/mr365truck/mkworld-lounge-tracks:latest
+    container_name: mogi-tracker
+    restart: unless-stopped
+    # `apps` on TrueNAS SCALE — matches the dataset owner, so no ACL surgery.
+    user: "568:568"
+    ports:
+      # HTTP only, bound to the LAN, which is ~99% of access. Tailscale covers the
+      # occasional off-network session. No auth: single user on a trusted network,
+      # which means anything on that network can read and write the database.
+      - "8000:8000"
+    environment:
+      TZ: America/Los_Angeles          # render timezone for played_at — set to yours
+      DATABASE_PATH: /data/mogi.db
+      BACKUP_DIR: /data/backups
+      BACKUP_KEEP: "30"
+      BACKUP_HOUR: "4"                 # nightly VACUUM INTO, in TZ above
+      PORT: "8000"
+    volumes:
+      - /mnt/tank/apps/mogi-tracker:/data
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=4).status==200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
