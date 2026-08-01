@@ -1,0 +1,3744 @@
+{
+  "source": "Lounge.pdf",
+  "note": "Prototype of the spec section 7 paste importer. Codes follow Appendix A and are provisional.",
+  "track_table": {
+    "MBC": {
+      "full_name": "Mario Bros. Circuit",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "mbc"
+      ]
+    },
+    "CC": {
+      "full_name": "Crown City",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "cc",
+        "crown city"
+      ]
+    },
+    "WS": {
+      "full_name": "Whistlestop Summit",
+      "is_retro": 0,
+      "has_gate": 1,
+      "aliases": [
+        "ws",
+        "wss",
+        "whistlestop"
+      ]
+    },
+    "DKSP": {
+      "full_name": "DK Spaceport",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "dksp"
+      ]
+    },
+    "SP": {
+      "full_name": "Starview Peak",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "sp",
+        "starview"
+      ]
+    },
+    "FO": {
+      "full_name": "Faraway Oasis",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "fo",
+        "faraway"
+      ]
+    },
+    "PS": {
+      "full_name": "Peach Stadium",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "ps"
+      ]
+    },
+    "SSS": {
+      "full_name": "Salty Salty Speedway",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "sss",
+        "salty"
+      ]
+    },
+    "GBR": {
+      "full_name": "Great ? Block Ruins",
+      "is_retro": 0,
+      "has_gate": 1,
+      "aliases": [
+        "gbr"
+      ]
+    },
+    "CCF": {
+      "full_name": "Cheep Cheep Falls",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "ccf"
+      ]
+    },
+    "DD": {
+      "full_name": "Dandelion Depths",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "dd",
+        "dandelion"
+      ]
+    },
+    "BCi": {
+      "full_name": "Boo Cinema",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "bci"
+      ]
+    },
+    "DBB": {
+      "full_name": "Dry Bones Burnout",
+      "is_retro": 0,
+      "has_gate": 0,
+      "aliases": [
+        "dbb"
+      ]
+    },
+    "BC": {
+      "full_name": "Bowser's Castle",
+      "is_retro": 0,
+      "has_gate": 1,
+      "aliases": [
+        "bc",
+        "castle"
+      ]
+    },
+    "AH": {
+      "full_name": "Acorn Heights",
+      "is_retro": 0,
+      "has_gate": 1,
+      "aliases": [
+        "ah",
+        "acorn"
+      ]
+    },
+    "rMC": {
+      "full_name": "Mario Circuit",
+      "is_retro": null,
+      "has_gate": 0,
+      "aliases": [
+        "rmc",
+        "mc"
+      ]
+    },
+    "rDH": {
+      "full_name": "Desert Hills",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rdh",
+        "hills",
+        "desert hills"
+      ]
+    },
+    "rSGB": {
+      "full_name": "Shy Guy Bazaar",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rsgb",
+        "sgb",
+        "bazaar"
+      ]
+    },
+    "rWSt": {
+      "full_name": "Wario Stadium",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rwst",
+        "stadium"
+      ]
+    },
+    "rAF": {
+      "full_name": "Airship Fortress",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "raf",
+        "af",
+        "airship"
+      ]
+    },
+    "rDKP": {
+      "full_name": "DK Pass",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rdkp",
+        "dkp",
+        "pass"
+      ]
+    },
+    "SHS": {
+      "full_name": "Sky-High Sundae",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "shs",
+        "sks",
+        "sundae"
+      ]
+    },
+    "rWSh": {
+      "full_name": "Wario Shipyard",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rwsh",
+        "shipyard"
+      ]
+    },
+    "rKTB": {
+      "full_name": "Koopa Troopa Beach",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rktb",
+        "ktb"
+      ]
+    },
+    "rPB": {
+      "full_name": "Peach Beach",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rpb",
+        "pb",
+        "peach beach"
+      ]
+    },
+    "rDDJ": {
+      "full_name": "Dino Dino Jungle",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rddj",
+        "ddj"
+      ]
+    },
+    "rMMM": {
+      "full_name": "Moo Moo Meadows",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rmmm",
+        "mmm"
+      ]
+    },
+    "rCM": {
+      "full_name": "Choco Mountain",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rcm",
+        "cm",
+        "choco"
+      ]
+    },
+    "rTF": {
+      "full_name": "Toad's Factory",
+      "is_retro": 1,
+      "has_gate": 0,
+      "aliases": [
+        "rtf",
+        "tf"
+      ]
+    },
+    "RR": {
+      "full_name": "Rainbow Road",
+      "is_retro": null,
+      "has_gate": 0,
+      "aliases": [
+        "rr"
+      ]
+    }
+  },
+  "counts": {
+    "sessions": 27,
+    "sessions_with_races": 25,
+    "races": 281,
+    "placements": 139,
+    "unresolved_tracks": 0,
+    "warnings": 4
+  },
+  "sessions": [
+    {
+      "header_raw": "ffa, placement, 5/26, 3pm, min: 7, max: 3000, avg: 2140, seat: 1",
+      "format": "ffa",
+      "date": "5/26",
+      "time": "3pm",
+      "room_min_mmr": 7,
+      "room_max_mmr": 3000,
+      "room_avg_mmr": 2140,
+      "seat": 1,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 1,
+      "page": 1,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "Crown City",
+          "track_code": "CC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "Faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "Sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "Airship",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "Acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "Bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "WS",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "DKP",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "WS",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "1yr anniversary tourney friday jun 6 @ 6pm / Room 1",
+      "format": "tournament",
+      "date": "6/6",
+      "time": "6pm",
+      "room_min_mmr": null,
+      "room_max_mmr": null,
+      "room_avg_mmr": null,
+      "seat": null,
+      "mate_mmr": null,
+      "spectated": false,
+      "room": 1,
+      "index": 2,
+      "page": 1,
+      "event": "1yr anniversary tourney friday jun 6 @ 6pm",
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "mmm",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "Farawayhandling",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "unparsed trailing text: handling",
+            "Apparently the fast strat (rather than tricking onto the sign) is hard with yoshi"
+          ]
+        },
+        {
+          "race_num": 4,
+          "track_raw": "Shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "ktb",
+          "track_code": "rKTB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "whistlestop",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "peach beach",
+          "track_code": "rPB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [
+        "scored 8th"
+      ],
+      "expected_races": 8,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "1yr anniversary tourney friday jun 6 @ 6pm / Room 2",
+      "format": "tournament",
+      "date": "6/6",
+      "time": "6pm",
+      "room_min_mmr": null,
+      "room_max_mmr": null,
+      "room_avg_mmr": null,
+      "seat": null,
+      "mate_mmr": null,
+      "spectated": false,
+      "room": 2,
+      "index": 3,
+      "page": 1,
+      "event": "1yr anniversary tourney friday jun 6 @ 6pm",
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "Desert hills",
+          "track_code": "rDH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "mmm",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "mbc",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "starview",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "airship",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [
+        "placed 8th/12, eliminated"
+      ],
+      "expected_races": 8,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "viewer 6v6, 6/12 @ 7:00pm",
+      "format": "6v6",
+      "date": "6/12",
+      "time": "7:00pm",
+      "room_min_mmr": null,
+      "room_max_mmr": null,
+      "room_avg_mmr": null,
+      "seat": null,
+      "mate_mmr": null,
+      "spectated": true,
+      "index": 4,
+      "page": 1,
+      "event": null,
+      "races": [],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": true,
+      "placements_recorded": 0,
+      "is_complete": true
+    },
+    {
+      "header_raw": "Ffa 6/13, 10am",
+      "format": "ffa",
+      "date": "6/13",
+      "time": "10am",
+      "room_min_mmr": null,
+      "room_max_mmr": null,
+      "room_avg_mmr": null,
+      "seat": null,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 5,
+      "page": 1,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "Faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "Bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "Acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "Airship",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "KTB",
+          "track_code": "rKTB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "Stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "SHS",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "MC",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "Shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [
+        "Tbh got really unlucky, scored 88, +46 mmr"
+      ],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA 6/19 3pm, min: 4157, max: 4773, avg: 4490, seat: 11",
+      "format": "ffa",
+      "date": "6/19",
+      "time": "3pm",
+      "room_min_mmr": 4157,
+      "room_max_mmr": 4773,
+      "room_avg_mmr": 4490,
+      "seat": 11,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 6,
+      "page": 2,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "Acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "Bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "Faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "SHS",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "Bci",
+          "track_code": "BCi",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "Dbb",
+          "track_code": "DBB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "SSS",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "Whistlestop",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "Stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "Shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA, 6/20, 12 noon, min: 3423, maX: 4329, avg: 3845, seat: 3",
+      "format": "ffa",
+      "date": "6/20",
+      "time": "12 noon",
+      "room_min_mmr": 3423,
+      "room_max_mmr": 4329,
+      "room_avg_mmr": 3845,
+      "seat": 3,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 7,
+      "page": 2,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "SHS",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "RAF",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "BAZAAR",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "Faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "Stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "Whistlestop",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "SSS",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "AH",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "MMM",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "Choco",
+          "track_code": "rCM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA, 6/20, 1PM, min: 3359, max: 4329, avg: 3890, seat: 4",
+      "format": "ffa",
+      "date": "6/20",
+      "time": "1pm",
+      "room_min_mmr": 3359,
+      "room_max_mmr": 4329,
+      "room_avg_mmr": 3890,
+      "seat": 4,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 8,
+      "page": 2,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "RR",
+          "track_code": "RR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "AH",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "Pass",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "Faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "Hills",
+          "track_code": "rDH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "RAF",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "Whistlestop",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "Choco",
+          "track_code": "rCM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "Stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "Shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA 7/6 12 NOON, min: 3728, max: 4236, avg: 4118, seat: 9",
+      "format": "ffa",
+      "date": "7/6",
+      "time": "12 noon",
+      "room_min_mmr": 3728,
+      "room_max_mmr": 4236,
+      "room_avg_mmr": 4118,
+      "seat": 9,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 9,
+      "page": 3,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "Cc",
+          "track_code": "CC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "RMC",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "Starview",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "RTF",
+          "track_code": "rTF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "RAF",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "WS",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "SSS",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "Rktb",
+          "track_code": "rKTB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "Acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": null,
+          "track_code": null,
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "2v2 12p, 7/8,7:00pm",
+      "format": "2v2",
+      "date": "7/8",
+      "time": "7:00pm",
+      "room_min_mmr": null,
+      "room_max_mmr": null,
+      "room_avg_mmr": null,
+      "seat": null,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 10,
+      "page": 3,
+      "event": null,
+      "races": [],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": true,
+      "placements_recorded": 0,
+      "is_complete": true
+    },
+    {
+      "header_raw": "FFA, 7/16, 6pm, min: 4239, max: 5455, avg: 4933, seat: 11",
+      "format": "ffa",
+      "date": "7/16",
+      "time": "6pm",
+      "room_min_mmr": 4239,
+      "room_max_mmr": 5455,
+      "room_avg_mmr": 4933,
+      "seat": 11,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 11,
+      "page": 3,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "Starview",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "airship",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "whistlestop",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "castle",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "RR",
+          "track_code": "RR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "CCF",
+          "track_code": "CCF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA, 7/8, 7pm, min: 3669, max: 4485, avg: 4124, seat: 4",
+      "format": "ffa",
+      "date": "7/8",
+      "time": "7pm",
+      "room_min_mmr": 3669,
+      "room_max_mmr": 4485,
+      "room_avg_mmr": 4124,
+      "seat": 4,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 12,
+      "page": 3,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "rMMM",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "rDDj",
+          "track_code": "rDDJ",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "whistlestop",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "salty",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "BCi",
+          "track_code": "BCi",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "hills (why)",
+          "track_code": "rDH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "why"
+          ]
+        },
+        {
+          "race_num": 11,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "pass",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA 7/17, 6PM, min: 4024, max: 5002, avg: 4473, seat: 9",
+      "format": "ffa",
+      "date": "7/17",
+      "time": "6pm",
+      "room_min_mmr": 4024,
+      "room_max_mmr": 5002,
+      "room_avg_mmr": 4473,
+      "seat": 9,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 13,
+      "page": 4,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "RR",
+          "track_code": "RR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "AH",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "WHISTLESTOP",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "Rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "Raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "Stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "Sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "Rmmm",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "Pass",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": null,
+          "track_code": null,
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA 7/20, 5pm, min: 4164, max: 4904, avg: 4468, seat: 12",
+      "format": "ffa",
+      "date": "7/20",
+      "time": "5pm",
+      "room_min_mmr": 4164,
+      "room_max_mmr": 4904,
+      "room_avg_mmr": 4468,
+      "seat": 12,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 14,
+      "page": 4,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "pass",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "rDDJ",
+          "track_code": "rDDJ",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "PS",
+          "track_code": "PS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "rTF",
+          "track_code": "rTF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "rAF",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "DBB",
+          "track_code": "DBB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "starview",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 0,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA 7/21, 4pm, min: 4041, max: 4976, avg: 4410, seat: 10",
+      "format": "ffa",
+      "date": "7/21",
+      "time": "4pm",
+      "room_min_mmr": 4041,
+      "room_max_mmr": 4976,
+      "room_avg_mmr": 4410,
+      "seat": 10,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 15,
+      "page": 4,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "DBB",
+          "track_code": "DBB",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "started 4",
+            "4th"
+          ]
+        },
+        {
+          "race_num": 2,
+          "track_raw": "rMMM",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "MBC",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "(shouldve been 5th but the bullet was fucking stupid in the shortcut)"
+          ]
+        },
+        {
+          "race_num": 4,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "RR",
+          "track_code": "RR",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "somehow"
+          ]
+        },
+        {
+          "race_num": 6,
+          "track_raw": "CCF",
+          "track_code": "CCF",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "WS",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "starview",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 11,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA, 7/21, 6:00pm, min: 3635, max: 4980, avg: 4249, seat: 8",
+      "format": "ffa",
+      "date": "7/21",
+      "time": "6:00pm",
+      "room_min_mmr": 3635,
+      "room_max_mmr": 4980,
+      "room_avg_mmr": 4249,
+      "seat": 8,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 16,
+      "page": 5,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "sp",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": 2,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "WS",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "rtf",
+          "track_code": "rTF",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "ccf",
+          "track_code": "CCF",
+          "variant": "3lap",
+          "placement": 4,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "mbc",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "gbr",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "l1: no shrooms",
+            "l2: draft on cut",
+            "l3: failed the cut in 4?"
+          ]
+        },
+        {
+          "race_num": 10,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 11,
+      "is_complete": false
+    },
+    {
+      "header_raw": "FFA 7/23, min: 3634, max: 4515, avg: 4,085, seat: 11",
+      "format": "ffa",
+      "date": "7/23",
+      "time": null,
+      "room_min_mmr": 3634,
+      "room_max_mmr": 4515,
+      "room_avg_mmr": 4085,
+      "seat": 11,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 17,
+      "page": 6,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": 8,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "hills",
+          "track_code": "rDH",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "rr",
+          "track_code": "RR",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 6,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "rktb",
+          "track_code": "rKTB",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "acorn",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "mbc",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "pb",
+          "track_code": "rPB",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "FFA 7/23 min: 3423, max: 4189, avg: 3837, seat: 8",
+      "format": "ffa",
+      "date": "7/23",
+      "time": null,
+      "room_min_mmr": 3423,
+      "room_max_mmr": 4189,
+      "room_avg_mmr": 3837,
+      "seat": 8,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 18,
+      "page": 6,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "GBR",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 6,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "rddj",
+          "track_code": "rDDJ",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "(massive skill issue)"
+          ]
+        },
+        {
+          "race_num": 6,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "cc",
+          "track_code": "CC",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "ffa 7/23 9pm, min: 3408, max: 3874, avg: 3630, seat: 5",
+      "format": "ffa",
+      "date": "7/23",
+      "time": "9pm",
+      "room_min_mmr": 3408,
+      "room_max_mmr": 3874,
+      "room_avg_mmr": 3630,
+      "seat": 5,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 19,
+      "page": 7,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "gbr",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": 7,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "rr",
+          "track_code": "RR",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "rmmm",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "pass",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "+1"
+          ]
+        },
+        {
+          "race_num": 7,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "+1"
+          ]
+        },
+        {
+          "race_num": 9,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "ffa 7/25, 12 noon, min: 3285, max: 3701, avg: 3486, seat: 1",
+      "format": "ffa",
+      "date": "7/25",
+      "time": "12 noon",
+      "room_min_mmr": 3285,
+      "room_max_mmr": 3701,
+      "room_avg_mmr": 3486,
+      "seat": 1,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 20,
+      "page": 8,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "mbc",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": 4,
+          "start_position": 1,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": [
+            "massive skill issue, literally just failed the cj to the rail for no reason",
+            "+1"
+          ]
+        },
+        {
+          "race_num": 3,
+          "track_raw": "bci",
+          "track_code": "BCi",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "sundae",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "rmmm",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "gbr",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "7/30, 11am, ffa, min: 3000, max: 4369, avg: 3655, seat: 5",
+      "format": "ffa",
+      "date": "7/30",
+      "time": "11am",
+      "room_min_mmr": 3000,
+      "room_max_mmr": 4369,
+      "room_avg_mmr": 3655,
+      "seat": 5,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 21,
+      "page": 8,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": 12,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "rddj",
+          "track_code": "rDDJ",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "shipyard",
+          "track_code": "rWSh",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "dbb",
+          "track_code": "DBB",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "ccf",
+          "track_code": "CCF",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 9,
+      "is_complete": false
+    },
+    {
+      "header_raw": "12 noon, ffa, min: 2966, max: 3795, avg: 3288, seat: 1",
+      "format": "ffa",
+      "date": "7/30",
+      "time": "12 noon",
+      "room_min_mmr": 2966,
+      "room_max_mmr": 3795,
+      "room_avg_mmr": 3288,
+      "seat": 1,
+      "mate_mmr": null,
+      "spectated": false,
+      "date_inherited": true,
+      "index": 22,
+      "page": 9,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": null,
+          "start_position": 1,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": true,
+      "placements_recorded": 0,
+      "is_complete": true
+    },
+    {
+      "header_raw": "12 noon, ffa, min: 2966, max: 3795, avg: 3288, seat: 1 [restart: no header]",
+      "format": "ffa",
+      "date": "7/30",
+      "time": "12 noon",
+      "room_min_mmr": 2966,
+      "room_max_mmr": 3795,
+      "room_avg_mmr": 3288,
+      "seat": 1,
+      "mate_mmr": null,
+      "spectated": false,
+      "date_inherited": true,
+      "page": 9,
+      "restarted_from": 22,
+      "index": 23,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "raf (intermission to)",
+          "track_code": "rAF",
+          "variant": "intermission",
+          "placement": 4,
+          "start_position": 6,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "gbr",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "sp",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "rdh",
+          "track_code": "rDH",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "7/30, ffa, 3pm, min: 3570, max: 4167, avg: 3864, seat: 6",
+      "format": "ffa",
+      "date": "7/30",
+      "time": "3pm",
+      "room_min_mmr": 3570,
+      "room_max_mmr": 4167,
+      "room_avg_mmr": 3864,
+      "seat": 6,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 24,
+      "page": 10,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": 12,
+          "mate_placement": null,
+          "notes": [
+            "coulda won easy"
+          ]
+        },
+        {
+          "race_num": 2,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 4,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "mbc",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "dksp",
+          "track_code": "DKSP",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "sp",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "rmmm",
+          "track_code": "rMMM",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "7/30, ffa, 4pm, min: 3452, max: 4291, avg: 3874, seat: 6",
+      "format": "ffa",
+      "date": "7/30",
+      "time": "4pm",
+      "room_min_mmr": 3452,
+      "room_max_mmr": 4291,
+      "room_avg_mmr": 3874,
+      "seat": 6,
+      "mate_mmr": null,
+      "spectated": false,
+      "index": 25,
+      "page": 10,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": 6,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "ccf",
+          "track_code": "CCF",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "pASS",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "mbc",
+          "track_code": "MBC",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "raf",
+          "track_code": "rAF",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "gbr",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "ps",
+          "track_code": "PS",
+          "variant": "3lap",
+          "placement": 8,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "7/30, 10pm, 2v2, min: 3891, max: 5666, avg: 4844, seat: 12, mate: 5435",
+      "format": "2v2",
+      "date": "7/30",
+      "time": "10pm",
+      "room_min_mmr": 3891,
+      "room_max_mmr": 5666,
+      "room_avg_mmr": 4844,
+      "seat": 12,
+      "mate_mmr": 5435,
+      "spectated": false,
+      "index": 26,
+      "page": 11,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "BC",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 7,
+          "start_position": 9,
+          "mate_placement": 4,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "stadium",
+          "track_code": "rWSt",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": null,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": 3,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": 11,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "faraway",
+          "track_code": "FO",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": 11,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": 11,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "dd",
+          "track_code": "DD",
+          "variant": "3lap",
+          "placement": 2,
+          "start_position": null,
+          "mate_placement": 12,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "gbr",
+          "track_code": "GBR",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": 2,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "cc",
+          "track_code": "CC",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": 4,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 9,
+          "start_position": null,
+          "mate_placement": 6,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "rddj",
+          "track_code": "rDDJ",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": 1,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    },
+    {
+      "header_raw": "7/30, 2v2, 11pm, min: 2939, max: 4183, avg: 3585, mate: 3000, seat 5",
+      "format": "2v2",
+      "date": "7/30",
+      "time": "11pm",
+      "room_min_mmr": 2939,
+      "room_max_mmr": 4183,
+      "room_avg_mmr": 3585,
+      "seat": 5,
+      "mate_mmr": 3000,
+      "spectated": false,
+      "index": 27,
+      "page": 12,
+      "event": null,
+      "races": [
+        {
+          "race_num": 1,
+          "track_raw": "ah",
+          "track_code": "AH",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": 4,
+          "notes": []
+        },
+        {
+          "race_num": 2,
+          "track_raw": "rdh",
+          "track_code": "rDH",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": 2,
+          "notes": []
+        },
+        {
+          "race_num": 3,
+          "track_raw": "rddj",
+          "track_code": "rDDJ",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": 7,
+          "notes": []
+        },
+        {
+          "race_num": 4,
+          "track_raw": "cc",
+          "track_code": "CC",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": 9,
+          "notes": []
+        },
+        {
+          "race_num": 5,
+          "track_raw": "ws",
+          "track_code": "WS",
+          "variant": "3lap",
+          "placement": 1,
+          "start_position": null,
+          "mate_placement": 6,
+          "notes": []
+        },
+        {
+          "race_num": 6,
+          "track_raw": "sss",
+          "track_code": "SSS",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": 6,
+          "notes": []
+        },
+        {
+          "race_num": 7,
+          "track_raw": "rmc",
+          "track_code": "rMC",
+          "variant": "3lap",
+          "placement": 12,
+          "start_position": null,
+          "mate_placement": 4,
+          "notes": []
+        },
+        {
+          "race_num": 8,
+          "track_raw": "pass",
+          "track_code": "rDKP",
+          "variant": "3lap",
+          "placement": 11,
+          "start_position": null,
+          "mate_placement": 6,
+          "notes": []
+        },
+        {
+          "race_num": 9,
+          "track_raw": "sp",
+          "track_code": "SP",
+          "variant": "3lap",
+          "placement": 3,
+          "start_position": null,
+          "mate_placement": 11,
+          "notes": []
+        },
+        {
+          "race_num": 10,
+          "track_raw": "bazaar",
+          "track_code": "rSGB",
+          "variant": "3lap",
+          "placement": 10,
+          "start_position": null,
+          "mate_placement": 1,
+          "notes": []
+        },
+        {
+          "race_num": 11,
+          "track_raw": "bc",
+          "track_code": "BC",
+          "variant": "3lap",
+          "placement": 6,
+          "start_position": null,
+          "mate_placement": 9,
+          "notes": []
+        },
+        {
+          "race_num": 12,
+          "track_raw": "shs",
+          "track_code": "SHS",
+          "variant": "3lap",
+          "placement": 5,
+          "start_position": null,
+          "mate_placement": 1,
+          "notes": []
+        }
+      ],
+      "notes": [],
+      "expected_races": 12,
+      "aborted": false,
+      "placements_recorded": 12,
+      "is_complete": true
+    }
+  ],
+  "warnings": [
+    {
+      "session": 2,
+      "message": "race 3: recovered 'FO' from merged token 'Farawayhandling'"
+    },
+    {
+      "session": 9,
+      "message": "race 12: numbered race with no track"
+    },
+    {
+      "session": 13,
+      "message": "race 12: numbered race with no track"
+    },
+    {
+      "session": 22,
+      "message": "race numbering restarted at 1; split into session 23 (abandoned session followed by a fresh one)"
+    }
+  ]
+}
