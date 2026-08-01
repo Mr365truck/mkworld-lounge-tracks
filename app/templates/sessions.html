@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Sessions — mogi-tracker{% endblock %}
+
+{% block headeractions %}
+  <form method="post" action="/sessions" class="flex items-center gap-2">
+    <select name="fmt" class="field h-8 w-[5.5rem] text-sm">
+      <option value="ffa">FFA</option>
+      <option value="2v2">2v2</option>
+      <option value="3v3">3v3</option>
+      <option value="4v4">4v4</option>
+      <option value="6v6">6v6</option>
+      <option value="tournament">Tourney</option>
+    </select>
+    <button class="btn-accent h-8 px-3 text-sm">New session</button>
+  </form>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5 grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3">
+  {% for label, value, tone in [
+      ('Sessions', totals.sessions, 'text-ink-100'),
+      ('Races', totals.races, 'text-ink-100'),
+      ('Placements logged', totals.placements, 'text-ink-100'),
+      ('Incomplete', totals.incomplete, 'text-warn-400' if totals.incomplete else 'text-ink-100')] %}
+    <div class="card px-3 py-2.5">
+      <div class="text-[11px] uppercase tracking-wide text-ink-500">{{ label }}</div>
+      <div class="mt-0.5 text-2xl font-semibold tabular-nums {{ tone }}">{{ value }}</div>
+    </div>
+  {% endfor %}
+</div>
+
+{% if n_issues %}
+  <a href="/settings#issues" class="mb-4 flex items-center gap-2 rounded-lg border border-warn-500/30 bg-warn-500/10 px-3 py-2 text-sm text-warn-300 hover:bg-warn-500/15">
+    <span class="font-medium">{{ n_issues }}</span> unresolved import {{ 'issue' if n_issues == 1 else 'issues' }} in the review queue
+    <span class="ml-auto text-xs text-warn-400/70">Review →</span>
+  </a>
+{% endif %}
+
+{% if sessions %}
+<div class="card overflow-hidden">
+  <div class="overflow-x-auto">
+  <table class="w-full min-w-[880px] text-sm">
+    <thead>
+      <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+        <th class="px-3 py-2 font-medium">Played</th>
+        <th class="px-3 py-2 font-medium">Format</th>
+        <th class="px-3 py-2 text-right font-medium">Avg MMR</th>
+        <th class="px-3 py-2 text-right font-medium">Max MMR</th>
+        <th class="px-3 py-2 text-right font-medium">Seat</th>
+        {# placements logged, not races run — a session can have 12 races and 0 placements #}
+        <th class="px-3 py-2 text-right font-medium">Logged</th>
+        <th class="px-3 py-2 text-right font-medium">Avg place</th>
+        <th class="px-3 py-2 text-right font-medium">Score</th>
+        <th class="px-3 py-2 text-right font-medium">MMR Δ</th>
+        <th class="px-3 py-2 font-medium">Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in sessions %}
+      <tr class="group cursor-pointer border-b border-ink-900 last:border-0 hover:bg-ink-900/60"
+          onclick="location.href='/sessions/{{ s.id }}'">
+        <td class="whitespace-nowrap px-3 py-2">
+          <a href="/sessions/{{ s.id }}" class="font-medium text-ink-100 group-hover:text-accent-300">{{ s.played_at | dt }}</a>
+        </td>
+        <td class="px-3 py-2"><span class="chip">{{ s.format }}</span></td>
+        <td class="px-3 py-2 text-right tabular-nums text-ink-300">{{ s.room_avg_mmr | intcomma }}</td>
+        <td class="px-3 py-2 text-right tabular-nums text-ink-300">{{ s.room_max_mmr | intcomma }}</td>
+        <td class="px-3 py-2 text-right tabular-nums text-ink-300">{{ s.seat | intcomma }}</td>
+        <td class="px-3 py-2 text-right tabular-nums text-ink-400">{{ s.n_placements }}<span class="text-ink-600">/{{ s.expected_races }}</span></td>
+        <td class="px-3 py-2 text-right tabular-nums font-medium
+                   {% if s.avg_placement is not none and s.avg_placement <= 6.5 %}text-good-400{% elif s.avg_placement is not none %}text-warn-400{% endif %}">
+          {{ s.avg_placement | num }}
+        </td>
+        <td class="px-3 py-2 text-right tabular-nums text-ink-300">{{ s.score | intcomma }}</td>
+        <td class="px-3 py-2 text-right tabular-nums {% if s.mmr_delta and s.mmr_delta > 0 %}text-good-400{% elif s.mmr_delta %}text-bad-400{% else %}text-ink-500{% endif %}">
+          {% if s.mmr_delta is not none %}{{ '%+d' % s.mmr_delta }}{% else %}—{% endif %}
+        </td>
+        <td class="px-3 py-2">
+          {% if s.aborted %}
+            <span class="chip-muted">aborted</span>
+          {% elif s.is_complete %}
+            <span class="chip-good">complete</span>
+          {% else %}
+            <span class="chip-warn">{{ s.expected_races - s.n_placements }} missing</span>
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% else %}
+<div class="card grid place-items-center px-6 py-16 text-center">
+  <div class="text-lg font-medium">No sessions yet</div>
+  <p class="mt-1 max-w-md text-sm text-ink-500">
+    Start one from the button above, or paste the Google Doc archive into
+    <a href="/import" class="text-accent-400 underline underline-offset-2">Import</a> to bring the history in.
+  </p>
+</div>
+{% endif %}
+{% endblock %}

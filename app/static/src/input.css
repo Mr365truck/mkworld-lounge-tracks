@@ -1,0 +1,177 @@
+@import "tailwindcss";
+
+@source "../../templates";
+@source "../entry.js";
+
+/* Dark by default: this gets used in the evening, mid-lounge, next to a game. */
+@theme {
+  --color-ink-50:  #f4f6f8;
+  --color-ink-100: #e3e8ee;
+  --color-ink-200: #c6cfda;
+  --color-ink-300: #9aa7b8;
+  --color-ink-400: #6f7d90;
+  --color-ink-500: #55616f;
+  --color-ink-600: #3f4956;
+  --color-ink-700: #2c343e;
+  --color-ink-800: #1f262e;
+  --color-ink-900: #161c23;
+  --color-ink-950: #0e1318;
+
+  --color-accent-300: #7dd3fc;
+  --color-accent-400: #38bdf8;
+  --color-accent-500: #0ea5e9;
+
+  --color-good-400: #4ade80;
+  --color-good-500: #22c55e;
+  --color-warn-300: #fcd34d;
+  --color-warn-400: #fbbf24;
+  --color-warn-500: #f59e0b;
+  --color-bad-300:  #fca5a5;
+  --color-bad-400:  #f87171;
+  --color-bad-500:  #ef4444;
+}
+
+@layer components {
+  .card {
+    @apply rounded-xl border border-ink-800 bg-ink-900/40;
+  }
+
+  .lbl {
+    @apply mb-1 block text-[11px] uppercase tracking-wide text-ink-500;
+  }
+
+  .field {
+    @apply h-9 rounded-lg border border-ink-800 bg-ink-950 px-2.5 text-sm text-ink-100
+           transition placeholder:text-ink-700
+           focus:border-accent-500 focus:outline-none focus:ring-1 focus:ring-accent-500/40;
+  }
+  .field-error {
+    @apply border-bad-500 ring-1 ring-bad-500/40;
+  }
+  select.field {
+    @apply appearance-none pr-6;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg border border-ink-800
+           bg-ink-900 font-medium text-ink-200 transition
+           hover:border-ink-700 hover:bg-ink-800 focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-accent-500/50;
+  }
+  .btn-accent {
+    @apply inline-flex items-center justify-center rounded-lg bg-accent-500 font-medium
+           text-ink-950 transition hover:bg-accent-400 focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-accent-500/50;
+  }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center rounded-lg text-ink-400 transition
+           hover:bg-ink-800 hover:text-ink-100 focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-accent-500/50;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center rounded-lg bg-bad-500 font-medium
+           text-white transition hover:bg-bad-400 focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-bad-500/50;
+  }
+  .btn:disabled, .btn-accent:disabled {
+    @apply cursor-not-allowed opacity-40;
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded border border-ink-700 px-1.5 py-0.5
+           text-[11px] font-medium text-ink-300;
+  }
+  .chip-muted {
+    @apply inline-flex items-center rounded bg-ink-800 px-1.5 py-0.5 text-[11px] text-ink-400;
+  }
+  .chip-good {
+    @apply inline-flex items-center rounded bg-good-500/15 px-1.5 py-0.5
+           text-[11px] font-medium text-good-400;
+  }
+  .chip-warn {
+    @apply inline-flex items-center rounded bg-warn-500/15 px-1.5 py-0.5
+           text-[11px] font-medium text-warn-400;
+  }
+
+  .kbd {
+    @apply rounded border border-ink-700 bg-ink-900 px-1 py-px font-mono text-[10px] text-ink-400;
+  }
+
+  /* --- entry rows ------------------------------------------------------- */
+  .race-row {
+    @apply flex flex-wrap items-center gap-1.5 border-b border-ink-900 px-2 py-1.5
+           last:border-0 sm:flex-nowrap sm:gap-2 sm:px-3;
+  }
+  .race-row:focus-within {
+    @apply bg-ink-900/60;
+  }
+  /* When a row is an intermission the exception stays visible rather than hiding,
+     same reasoning as the incomplete-session flag. */
+  .race-row[data-variant="intermission"] {
+    @apply border-l-2 border-l-warn-500 bg-warn-500/5;
+  }
+  .race-num {
+    @apply w-7 shrink-0 text-center text-xs tabular-nums text-ink-600;
+  }
+  .track-name {
+    @apply pointer-events-none absolute inset-y-0 right-2 flex items-center truncate
+           text-xs text-ink-600 transition-opacity;
+  }
+  /* While the field is being typed into, the previously committed name is stale
+     and misleading — it says "Airship Fortress" as you type `bc`. */
+  .track-input:focus ~ .track-name {
+    @apply opacity-0;
+  }
+  .variant-select {
+    @apply h-7 w-[4.5rem] appearance-none rounded border border-ink-800 bg-transparent
+           px-1 text-center text-[11px] text-ink-500 focus:outline-none;
+  }
+  .row-dot {
+    @apply h-1.5 w-1.5 shrink-0 rounded-full bg-transparent transition-colors;
+  }
+  .row-dot.dirty { @apply bg-warn-400; }
+  .row-dot.saved { @apply bg-good-500/40; }
+  .row-dot.error { @apply bg-bad-500; }
+
+  /* --- typeahead -------------------------------------------------------- */
+  .track-menu {
+    @apply absolute left-0 top-full z-40 mt-1 w-[22rem] max-w-[80vw] overflow-hidden
+           rounded-lg border border-ink-700 bg-ink-900 shadow-xl shadow-black/50;
+  }
+  .track-opt {
+    @apply flex cursor-pointer items-center gap-2 px-2.5 py-1.5 text-sm;
+  }
+  .track-opt.active {
+    @apply bg-accent-500/15;
+  }
+  .track-opt-code {
+    @apply w-12 shrink-0 font-mono text-xs text-accent-300;
+  }
+  .track-opt-name {
+    @apply truncate text-ink-200;
+  }
+  .track-opt-tag {
+    @apply ml-auto shrink-0 rounded bg-good-500/20 px-1 text-[10px] font-medium text-good-400;
+  }
+  .track-opt-gate {
+    @apply shrink-0 rounded bg-ink-800 px-1 text-[10px] text-ink-400;
+  }
+  .track-menu-empty {
+    @apply px-2.5 py-2 text-xs text-ink-500;
+  }
+  .track-menu-foot {
+    @apply border-t border-ink-800 px-2.5 py-1.5 text-[11px] text-ink-600;
+  }
+}
+
+/* iOS zooms the page when an input under 16px takes focus, which wrecks one-handed
+   portrait entry. */
+@media (max-width: 640px) {
+  .field, .track-input { font-size: 16px; }
+}
+
+/* The column header row is desktop-only, so the secondary fields carry their own
+   labels on a phone and drop them where the header already says it. */
+@media (min-width: 641px) {
+  .mobile-hint::placeholder { color: transparent; }
+}

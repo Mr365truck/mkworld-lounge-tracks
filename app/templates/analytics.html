@@ -1,0 +1,286 @@
+{% extends "base.html" %}
+{% block title %}Analytics — mogi-tracker{% endblock %}
+
+{% block headeractions %}
+  <a href="/api/analytics" class="btn-ghost h-8 px-2.5 text-xs">JSON</a>
+  <a href="/export/races.csv" class="btn h-8 px-3 text-sm">Export CSV</a>
+{% endblock %}
+
+{% block content %}
+{% set c = a.counts %}
+
+<div class="mb-5 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-ink-400">
+  <span><span class="text-ink-100 font-medium">{{ c.sessions }}</span> sessions</span>
+  <span><span class="text-ink-100 font-medium">{{ c.races }}</span> races</span>
+  <span><span class="text-ink-100 font-medium">{{ c.placements }}</span> placements</span>
+  <span><span class="text-ink-100 font-medium">{{ c.residuals }}</span> with a residual</span>
+</div>
+
+{# ------------------------------------------------------------ per-track table #}
+<section class="card mb-5 overflow-hidden">
+  <div class="flex flex-wrap items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+    <h2 class="font-medium">Per-track</h2>
+    <p class="text-xs text-ink-500">
+      Residual is <span class="text-ink-400">leave-one-out</span>: each race measured against the mean of the
+      <em>other</em> races in its session. Negative = outperformed own form.
+    </p>
+    <a href="?intermissions={{ 0 if show_intermissions else 1 }}"
+       class="ml-auto btn-ghost h-7 px-2 text-xs">
+      {{ 'Excluding' if not show_intermissions else 'Including' }} intermissions
+    </a>
+  </div>
+
+  {% if a.tracks %}
+  <div class="overflow-x-auto">
+  <table class="w-full min-w-[860px] text-sm">
+    <thead>
+      <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+        <th class="px-3 py-2 font-medium">Track</th>
+        <th class="px-3 py-2 text-right font-medium">Picks</th>
+        <th class="px-3 py-2 text-right font-medium">Pick rate</th>
+        <th class="px-3 py-2 text-right font-medium">n</th>
+        <th class="px-3 py-2 text-right font-medium">Mean</th>
+        <th class="px-3 py-2 text-right font-medium">SD</th>
+        <th class="px-3 py-2 text-right font-medium">Residual</th>
+        <th class="px-3 py-2 font-medium">95% CI</th>
+        <th class="px-3 py-2 text-right font-medium" title="residual × pick rate = expected places lost per session">Weighted</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for t in a.tracks %}
+      <tr class="border-b border-ink-900 last:border-0 hover:bg-ink-900/50 {{ 'opacity-45' if t.low_n }}">
+        <td class="px-3 py-1.5">
+          <span class="font-mono text-xs text-accent-300">{{ t.code }}</span>
+          <span class="ml-1.5 text-ink-300">{{ t.full_name }}</span>
+          {% if t.has_gate %}<span class="chip-muted ml-1 text-[10px]">cut</span>{% endif %}
+          {% if t.low_n %}<span class="chip-warn ml-1 text-[10px]">n&lt;{{ a.min_n_track }}</span>{% endif %}
+        </td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ t.picks }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ t.pick_rate | pct }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ t.n_placements }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums">{{ t.mean_placement | num }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-500">{{ t.sd | num }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums font-medium
+                   {% if t.residual is not none and t.residual < 0 %}text-good-400{% elif t.residual is not none %}text-bad-400{% endif %}">
+          {{ t.residual | signed }}
+        </td>
+        <td class="px-3 py-1.5 tabular-nums text-xs text-ink-500">
+          {% if t.residual_ci_low is not none %}
+            [{{ t.residual_ci_low | signed }}, {{ t.residual_ci_high | signed }}]
+            {% if t.residual_ci_low <= 0 <= t.residual_ci_high %}<span class="text-ink-700" title="CI spans zero">·</span>{% endif %}
+          {% else %}—{% endif %}
+        </td>
+        <td class="px-3 py-1.5 text-right tabular-nums
+                   {% if t.weighted_residual is not none and t.weighted_residual < 0 %}text-good-400{% elif t.weighted_residual is not none %}text-bad-400{% endif %}">
+          {{ t.weighted_residual | signed }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  <p class="border-t border-ink-800 px-3 py-2 text-xs text-ink-600">
+    Sorted by weighted residual — expected places lost per session. Rows with n &lt; {{ a.min_n_track }} are dimmed:
+    an under-sampled track reading as signal is a live failure mode.
+  </p>
+  {% else %}
+    <p class="px-3 py-8 text-center text-sm text-ink-500">No placements recorded yet.</p>
+  {% endif %}
+</section>
+
+<div class="grid gap-5 lg:grid-cols-2">
+
+  {# ------------------------------------------------------------ session model #}
+  {% set sm = a.session_model %}
+  <section class="card overflow-hidden">
+    <div class="flex items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+      <h2 class="font-medium">Session model</h2>
+      <span class="text-xs text-ink-500">avg placement vs lobby</span>
+      <span class="ml-auto text-xs text-ink-500">n = {{ sm.n_sessions }}</span>
+    </div>
+    {% if sm.n_sessions %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+          <th class="px-3 py-2 font-medium">Predictor</th>
+          <th class="px-3 py-2 text-right font-medium">n</th>
+          <th class="px-3 py-2 text-right font-medium">r</th>
+          <th class="px-3 py-2 text-right font-medium">R²</th>
+          <th class="px-3 py-2 text-right font-medium">p</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in sm.univariate %}
+        <tr class="border-b border-ink-900 last:border-0 {{ 'opacity-45' if not u.usable }}">
+          <td class="px-3 py-1.5 font-mono text-xs text-ink-300">{{ u.predictor }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ u.n }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ u.r | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ u.r2 | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-500">{{ u.p_value | num(3) }}</td>
+        </tr>
+        {% endfor %}
+        {% if sm.multivariate %}
+        <tr class="bg-ink-900/40">
+          <td class="px-3 py-1.5 text-ink-300">multivariate (4 predictors)</td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ sm.multivariate.n }}</td>
+          <td class="px-3 py-1.5 text-right text-ink-600">—</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ sm.multivariate.r2 | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-500" title="adjusted R²">{{ sm.multivariate.adj_r2 | num }}</td>
+        </tr>
+        {% endif %}
+      </tbody>
+    </table>
+    {% if sm.multivariate and sm.multivariate.unreliable %}
+    <p class="border-t border-warn-500/25 bg-warn-500/10 px-3 py-2 text-xs text-warn-300">
+      Multivariate fit flagged unreliable: {{ sm.multivariate.n }} sessions against 4 predictors is
+      underpowered and will produce confident-looking coefficients. Prefer the univariate rows
+      until n ≥ {{ sm.min_n_multivariate }}.
+    </p>
+    {% endif %}
+    {% else %}
+      <p class="px-3 py-8 text-center text-sm text-ink-500">Needs sessions with placements.</p>
+    {% endif %}
+  </section>
+
+  {# ------------------------------------------------------------- gate analysis #}
+  <section class="card overflow-hidden">
+    <div class="flex items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+      <h2 class="font-medium">Gate tracks</h2>
+      <span class="text-xs text-ink-500">3-lap only</span>
+    </div>
+    {% if a.gates %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+          <th class="px-3 py-2 font-medium">Track</th>
+          <th class="px-3 py-2 text-right font-medium">Races</th>
+          <th class="px-3 py-2 text-right font-medium">Logged</th>
+          <th class="px-3 py-2 text-right font-medium">p(hit)</th>
+          <th class="px-3 py-2 text-right font-medium">Hit</th>
+          <th class="px-3 py-2 text-right font-medium">Miss</th>
+          <th class="px-3 py-2 text-right font-medium">E[place]</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in a.gates %}
+        <tr class="border-b border-ink-900 last:border-0 {{ 'opacity-45' if not g.n_recorded }}">
+          <td class="px-3 py-1.5">
+            <span class="font-mono text-xs text-accent-300">{{ g.code }}</span>
+            <span class="ml-1.5 text-ink-300">{{ g.full_name }}</span>
+          </td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ g.races }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ g.n_recorded }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ g.p_hit | pct }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ g.mean_given_hit | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ g.mean_given_miss | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ g.implied_placement | num }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="border-t border-ink-800 px-3 py-2 text-xs text-ink-600">
+      Splitting p(hit) into execution vs survival needs <span class="font-mono">lap1_position</span>,
+      which no historical race carries — it starts accumulating from the next session logged in the app.
+      That decomposition is the thing the Google Doc structurally cannot answer.
+    </p>
+    {% else %}
+      <p class="px-3 py-8 text-center text-sm text-ink-500">No gate tracks with races yet.</p>
+    {% endif %}
+  </section>
+
+  {# --------------------------------------------------------- lead defensibility #}
+  <section class="card overflow-hidden">
+    <div class="flex items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+      <h2 class="font-medium">Lead defensibility</h2>
+      <span class="text-xs text-ink-500">races started from P1</span>
+      <span class="ml-auto text-xs text-ink-500">n = {{ a.lead.n_from_first }}</span>
+    </div>
+    {% if a.lead.groups %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+          <th class="px-3 py-2 font-medium">Group</th>
+          <th class="px-3 py-2 text-right font-medium">n</th>
+          <th class="px-3 py-2 text-right font-medium">Mean</th>
+          <th class="px-3 py-2 text-right font-medium">Residual</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for g in a.lead.groups %}
+        <tr class="border-b border-ink-900 last:border-0 {{ 'opacity-45' if g.low_n }}">
+          <td class="px-3 py-1.5 text-ink-300">{{ g.label }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ g.n }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ g.mean_placement | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ g.residual | signed }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+    {% if not a.lead.flags_set %}
+    <p class="border-t border-ink-800 px-3 py-2 text-xs text-ink-600">
+      No track is flagged <span class="font-mono">good_from_first</span> yet — set the flags in
+      <a href="/settings" class="text-accent-400 underline underline-offset-2">Settings</a> and this
+      splits into a real comparison.
+    </p>
+    {% endif %}
+  </section>
+
+  {# ------------------------------------------------------------- intermissions #}
+  <section class="card overflow-hidden">
+    <div class="flex items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+      <h2 class="font-medium">Intermissions</h2>
+      <span class="text-xs text-ink-500">excluded from per-track above by default</span>
+    </div>
+    {% if a.intermissions %}
+    <table class="w-full text-sm">
+      <thead>
+        <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+          <th class="px-3 py-2 font-medium">Track</th>
+          <th class="px-3 py-2 font-medium">Session</th>
+          <th class="px-3 py-2 text-right font-medium">Race</th>
+          <th class="px-3 py-2 text-right font-medium">Place</th>
+          <th class="px-3 py-2 text-right font-medium">Residual</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in a.intermissions %}
+        <tr class="border-b border-ink-900 last:border-0">
+          <td class="px-3 py-1.5">
+            <span class="font-mono text-xs text-accent-300">{{ i.code }}</span>
+            <span class="ml-1.5 text-ink-300">{{ i.full_name }}</span>
+          </td>
+          <td class="px-3 py-1.5"><a href="/sessions/{{ i.session_id }}" class="text-ink-400 hover:text-accent-300">{{ i.played_at | dt }}</a></td>
+          <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ i.race_num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ i.placement or '—' }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ i.residual | signed }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+      <p class="px-3 py-8 text-center text-sm text-ink-500">None recorded — intermissions are banned in this lounge.</p>
+    {% endif %}
+  </section>
+</div>
+
+{% if a.mmr %}
+<section class="card mt-5 overflow-hidden">
+  <div class="border-b border-ink-800 px-3 py-2.5"><h2 class="font-medium">MMR over time</h2></div>
+  <table class="w-full text-sm">
+    <tbody>
+      {% for m in a.mmr %}
+      <tr class="border-b border-ink-900 last:border-0">
+        <td class="px-3 py-1.5 text-ink-400">{{ m.played_at | dt }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums">{{ m.before | intcomma }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums {{ 'text-good-400' if m.delta and m.delta > 0 else 'text-bad-400' }}">
+          {% if m.delta is not none %}{{ '%+d' % m.delta }}{% else %}—{% endif %}
+        </td>
+        <td class="px-3 py-1.5 text-right tabular-nums">{{ m.after | intcomma }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</section>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Import — mogi-tracker{% endblock %}
+
+{% block content %}
+<div class="grid gap-5 lg:grid-cols-[1fr_22rem]">
+  <section class="card overflow-hidden">
+    <div class="border-b border-ink-800 px-3 py-2.5">
+      <h2 class="font-medium">Paste importer</h2>
+      <p class="mt-0.5 text-xs text-ink-500">
+        Accepts the Google Doc format as-is: a header line
+        (<span class="font-mono">date, time, format, min/max/avg mmr, seat</span>) followed by a numbered
+        track list with optional nested sub-items.
+      </p>
+    </div>
+    <textarea id="paste" rows="18" spellcheck="false"
+      class="w-full resize-y bg-transparent px-3 py-3 font-mono text-xs text-ink-200 placeholder:text-ink-700 focus:outline-none"
+      placeholder="ffa, 7/23, min: 3634, max: 4870, avg: 4085, seat: 3&#10;1. bc&#10;   a. start: 4&#10;   b. 3&#10;2. raf&#10;   a. 6&#10;…"></textarea>
+    <div class="flex flex-wrap items-center gap-2 border-t border-ink-800 px-3 py-2">
+      <button id="dry" class="btn h-8 px-3 text-sm">Preview</button>
+      <button id="commit" class="btn-accent h-8 px-3 text-sm" disabled>Import</button>
+      <span id="msg" class="text-xs text-ink-500"></span>
+    </div>
+  </section>
+
+  <aside class="space-y-4">
+    <div class="card p-3 text-sm">
+      <h3 class="mb-1.5 font-medium">What it does with the messy parts</h3>
+      <ul class="space-y-1.5 text-xs text-ink-400">
+        <li>Track spellings resolve through the alias table — <span class="text-ink-300">45 historical spellings</span>, all mapped.</li>
+        <li>Race numbering restarting mid-block splits into two sessions: the abandoned one and the fresh one.</li>
+        <li>A numbered race with no track is kept, with no track. Dropping it would hide a real gap.</li>
+        <li>Missing dates inherit from the block above; missing times default to midnight.</li>
+        <li>Tournament rooms get <span class="font-mono">expected_races = 8</span>; everything else 12.</li>
+        <li><span class="font-mono">variant</span> defaults to 3lap; <span class="font-mono">shortcut_hit</span> to NULL — never <span class="font-mono">na</span>, since the doc records neither.</li>
+        <li>Anything unresolved goes to the review queue in <a href="/settings#issues" class="text-accent-400 underline underline-offset-2">Settings</a>, never silently dropped.</li>
+      </ul>
+    </div>
+    <div id="preview" class="card hidden p-3 text-sm"></div>
+  </aside>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const $ = (id) => document.getElementById(id);
+let lastText = '';
+
+async function run(dry) {
+  const text = $('paste').value;
+  if (!text.trim()) { $('msg').textContent = 'Nothing pasted.'; return; }
+  $('msg').textContent = dry ? 'parsing…' : 'importing…';
+  const res = await fetch('/api/import', {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ text, dry_run: dry }),
+  });
+  const j = await res.json();
+  if (!res.ok) { $('msg').textContent = j.detail || 'failed'; return; }
+
+  const warnRows = (j.warnings || []).map((w) => `
+    <li class="flex gap-1.5">
+      <span class="chip-muted shrink-0 text-[10px]">${w.kind}</span>
+      <span class="text-ink-400">${w.message}</span>
+    </li>`).join('');
+
+  $('preview').classList.remove('hidden');
+  $('preview').innerHTML = `
+    <h3 class="mb-2 font-medium">${dry ? 'Preview' : 'Imported'}</h3>
+    <div class="grid grid-cols-2 gap-2 text-xs">
+      ${[['Sessions', j.sessions], ['Races', j.races], ['Placements', j.placements],
+         ['Unresolved', j.unresolved]].map(([k, v]) => `
+        <div class="rounded border border-ink-800 px-2 py-1.5">
+          <div class="text-[10px] uppercase tracking-wide text-ink-500">${k}</div>
+          <div class="text-lg font-semibold tabular-nums ${k === 'Unresolved' && v ? 'text-bad-400' : ''}">${v}</div>
+        </div>`).join('')}
+    </div>
+    ${warnRows ? `<p class="mb-1 mt-3 text-[11px] uppercase tracking-wide text-ink-500">${j.warnings.length} note(s)</p>
+                  <ul class="space-y-1 text-xs">${warnRows}</ul>` : ''}`;
+
+  if (dry) {
+    lastText = text;
+    $('commit').disabled = false;
+    $('msg').textContent = 'Preview only — nothing written yet.';
+  } else {
+    $('commit').disabled = true;
+    $('msg').innerHTML = `Done. <a href="/" class="text-accent-400 underline underline-offset-2">View sessions →</a>`;
+  }
+}
+
+$('dry').addEventListener('click', () => run(true));
+$('commit').addEventListener('click', () => {
+  if ($('paste').value !== lastText) {
+    if (!confirm('The text changed since the preview. Import it anyway?')) return;
+  }
+  run(false);
+});
+$('paste').addEventListener('input', () => { $('commit').disabled = true; });
+</script>
+{% endblock %}

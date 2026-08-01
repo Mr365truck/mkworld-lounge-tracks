@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Not found — mogi-tracker{% endblock %}
+{% block content %}
+<div class="card mx-auto max-w-md p-8 text-center">
+  <div class="text-3xl font-semibold text-ink-700">404</div>
+  <p class="mt-2 text-sm text-ink-400">Nothing at <span class="font-mono text-ink-300">{{ path }}</span>.</p>
+  <a href="/" class="btn-accent mt-4 inline-flex h-9 items-center px-4 text-sm">Back to sessions</a>
+</div>
+{% endblock %}
