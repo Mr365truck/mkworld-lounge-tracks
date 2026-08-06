@@ -53,6 +53,7 @@
         <th class="px-3 py-2 text-right font-medium">Score</th>
         <th class="px-3 py-2 text-right font-medium">MMR Δ</th>
         <th class="px-3 py-2 font-medium">Status</th>
+        <th class="px-3 py-2 text-right font-medium">Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -83,6 +84,11 @@
           {% else %}
             <span class="chip-warn">{{ s.expected_races - s.n_placements }} missing</span>
           {% endif %}
+        </td>
+        <td class="px-3 py-2 text-right">
+          <a href="/sessions/{{ s.id }}/delete"
+             class="btn-ghost inline-flex h-7 items-center px-2 text-xs text-bad-400 hover:text-bad-300"
+             onclick="event.stopPropagation()">Delete</a>
         </td>
       </tr>
       {% endfor %}

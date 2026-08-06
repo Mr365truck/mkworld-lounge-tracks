@@ -84,7 +84,7 @@ writes a checkpointed copy to `/data/backups` and keeps the newest 30. It runs
 The entry screen is the one that decides whether this gets used. Target: a full
 12-race session, keyboard only, no mouse.
 
-- **Type a track code.** An unambiguous exact code (`raf`, `shs`, `ah`) commits itself
+- **Type a track code.** An unambiguous exact code (`raf`, `rshs`, `ah`) commits itself
   and hands focus straight to the placement box.
 - **Ambiguous ones wait for Enter.** `bc` is an exact hit, but `bci` (Boo Cinema)
   starts with it, so BC highlights and Enter confirms. Same for `ws`/`wss` and

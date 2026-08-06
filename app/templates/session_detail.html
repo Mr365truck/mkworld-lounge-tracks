@@ -56,13 +56,29 @@
 
       <div class="h-9 w-px bg-ink-800"></div>
 
-      {% for key, label in [('own_mmr_before','MMR before'), ('mmr_delta','MMR Δ'), ('score','Score')] %}
       <label class="block">
-        <span class="lbl">{{ label }}</span>
-        <input type="text" inputmode="numeric" class="field w-20 text-right" data-sfield="{{ key }}"
-               value="{{ session[key] if session[key] is not none else '' }}">
+        <span class="lbl">MMR before</span>
+        <input id="mmr-before" type="text" inputmode="numeric" class="field w-20 text-right"
+               data-sfield="own_mmr_before"
+               value="{{ session.own_mmr_before if session.own_mmr_before is not none else '' }}">
       </label>
-      {% endfor %}
+      <label class="block">
+        <span class="lbl">MMR Δ</span>
+        <input id="mmr-delta" type="text" inputmode="numeric" class="field w-20 text-right"
+               data-sfield="mmr_delta"
+               value="{{ session.mmr_delta if session.mmr_delta is not none else '' }}">
+      </label>
+      <label class="block">
+        <span class="lbl">MMR after</span>
+        <input id="mmr-after" type="text" inputmode="numeric" class="field w-20 text-right"
+               data-mmr-after
+               value="{{ session.own_mmr_before + session.mmr_delta if session.own_mmr_before is not none and session.mmr_delta is not none else '' }}">
+      </label>
+      <label class="block">
+        <span class="lbl">Score</span>
+        <input type="text" inputmode="numeric" class="field w-20 text-right" data-sfield="score"
+               value="{{ session.score if session.score is not none else '' }}">
+      </label>
 
       {# The one control that resolves a session the app would otherwise flag as
          incomplete forever, so it sits next to the completeness indicator. #}
@@ -113,7 +129,7 @@
       <span class="w-14 text-center">Lap 1</span>
       <span class="w-16 text-center">Cut</span>
       {% if is_team %}<span class="w-14 text-center">Mate</span>{% endif %}
-      <span class="min-w-[6rem] flex-1">Note</span>
+      <span class="min-w-[6rem] flex-1 sm:max-w-[20rem]">Note</span>
       <span class="w-24 text-right">Variant</span>
     </div>
 

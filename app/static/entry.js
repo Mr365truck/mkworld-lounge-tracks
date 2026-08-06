@@ -129,11 +129,55 @@
     }
   }
 
+  /* MMR after is derived rather than stored: before + delta. Keeping the derived
+   * field out of the schema prevents three persisted values from disagreeing. */
+  const mmrBefore = document.getElementById('mmr-before');
+  const mmrDelta = document.getElementById('mmr-delta');
+  const mmrAfter = document.getElementById('mmr-after');
+
+  function mmrNumber(el) {
+    const raw = el?.value.trim().replaceAll(',', '');
+    if (!raw || !/^[+-]?\d+$/.test(raw)) return null;
+    return Number(raw);
+  }
+
+  function fillMmrAfter() {
+    const before = mmrNumber(mmrBefore);
+    const delta = mmrNumber(mmrDelta);
+    mmrAfter.value = before == null || delta == null ? '' : String(before + delta);
+    mmrAfter.classList.remove('field-error');
+    mmrAfter.title = '';
+  }
+
+  async function deriveMmrDelta() {
+    const before = mmrNumber(mmrBefore);
+    const after = mmrNumber(mmrAfter);
+    if (mmrAfter.value.trim() === '') {
+      mmrDelta.value = '';
+      await saveSessionField(mmrDelta, '');
+      return;
+    }
+    if (before == null || after == null) {
+      mmrAfter.classList.add('field-error');
+      mmrAfter.title = before == null
+        ? 'Enter MMR before to calculate the change'
+        : 'MMR after must be a whole number';
+      return;
+    }
+    mmrAfter.classList.remove('field-error');
+    mmrAfter.title = '';
+    mmrDelta.value = String(after - before);
+    await saveSessionField(mmrDelta, mmrDelta.value);
+  }
+
   root.addEventListener('change', (e) => {
     const el = e.target;
-    if (el.dataset.sfield) {
+    if (el === mmrAfter) {
+      deriveMmrDelta();
+    } else if (el.dataset.sfield) {
       const v = el.type === 'checkbox' ? el.checked : el.value;
       saveSessionField(el, v);
+      if (el === mmrBefore || el === mmrDelta) fillMmrAfter();
     } else if (el.dataset.field && !el.classList.contains('track-input')) {
       saveRaceField(el, el.value);
     }

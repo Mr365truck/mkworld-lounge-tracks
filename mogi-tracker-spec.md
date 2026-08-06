@@ -16,7 +16,7 @@ in this repo), gets pasted into an LLM for analysis, and has already produced th
 classes of error:
 
 - **Ambiguous track codes.** The same track written as `WS`, `WSS`, `whistlestop`;
-  `SHS` / `sundae` / `SKS` for one track; `DKP` vs `pass` vs `dksp` for two different
+  `rSHS` / `sundae` / `SKS` for one track; `DKP` vs `pass` vs `dksp` for two different
   tracks that were conflated for weeks.
 - **Silent duplicates.** One session listed the same track twice (`raf` at races 1 and 11)
   and it was miscounted as a single appearance, which shifted that track's sample size and
@@ -492,7 +492,7 @@ gbr, ws, ah"*.
 | `rWSt` | Wario Stadium | 1 | 0 | `stadium`, `rwst` |
 | `rAF` | Airship Fortress | 1 | 0 | `raf`, `af`, `airship` |
 | `rDKP` | DK Pass | 1 | 0 | `rdkp`, `dkp`, `pass` |
-| `SHS` | Sky-High Sundae | 1 | 0 | `shs`, `sks`, `sundae` |
+| `rSHS` | Sky-High Sundae | 1 | 0 | `shs`, `sks`, `sundae` |
 | `rWSh` | Wario Shipyard | 1 | 0 | `shipyard`, `rwsh` |
 | `rKTB` | Koopa Troopa Beach | 1 | 0 | `ktb`, `rktb` |
 | `rPB` | Peach Beach | 1 | 0 | `pb`, `peach beach` |

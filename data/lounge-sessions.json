@@ -189,7 +189,7 @@
         "pass"
       ]
     },
-    "SHS": {
+    "rSHS": {
       "full_name": "Sky-High Sundae",
       "is_retro": 1,
       "has_gate": 0,
@@ -330,7 +330,7 @@
         {
           "race_num": 4,
           "track_raw": "Sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -476,7 +476,7 @@
         {
           "race_num": 4,
           "track_raw": "Shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -591,7 +591,7 @@
         {
           "race_num": 5,
           "track_raw": "shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -755,8 +755,8 @@
         },
         {
           "race_num": 9,
-          "track_raw": "SHS",
-          "track_code": "SHS",
+          "track_raw": "rSHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -849,8 +849,8 @@
         },
         {
           "race_num": 4,
-          "track_raw": "SHS",
-          "track_code": "SHS",
+          "track_raw": "rSHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -961,8 +961,8 @@
       "races": [
         {
           "race_num": 1,
-          "track_raw": "SHS",
-          "track_code": "SHS",
+          "track_raw": "rSHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -1439,7 +1439,7 @@
         {
           "race_num": 4,
           "track_raw": "sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -1601,7 +1601,7 @@
         {
           "race_num": 6,
           "track_raw": "sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -1775,7 +1775,7 @@
         {
           "race_num": 9,
           "track_raw": "Sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": null,
           "start_position": null,
@@ -2304,7 +2304,7 @@
         {
           "race_num": 4,
           "track_raw": "sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 1,
           "start_position": null,
@@ -2456,7 +2456,7 @@
         {
           "race_num": 5,
           "track_raw": "sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 12,
           "start_position": null,
@@ -2739,7 +2739,7 @@
         {
           "race_num": 4,
           "track_raw": "sundae",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 3,
           "start_position": null,
@@ -3068,7 +3068,7 @@
         {
           "race_num": 5,
           "track_raw": "shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 2,
           "start_position": null,
@@ -3272,7 +3272,7 @@
         {
           "race_num": 11,
           "track_raw": "shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 7,
           "start_position": null,
@@ -3334,7 +3334,7 @@
         {
           "race_num": 3,
           "track_raw": "shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 2,
           "start_position": null,
@@ -3486,7 +3486,7 @@
         {
           "race_num": 4,
           "track_raw": "shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 2,
           "start_position": null,
@@ -3708,7 +3708,7 @@
         {
           "race_num": 12,
           "track_raw": "shs",
-          "track_code": "SHS",
+          "track_code": "rSHS",
           "variant": "3lap",
           "placement": 5,
           "start_position": null,

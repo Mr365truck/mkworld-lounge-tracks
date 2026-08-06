@@ -63,14 +63,14 @@ def test_month_name_header_dates_the_tournament(conn):
     assert s.format == "tournament"
 
 
-def test_implausible_min_mmr_warns_but_is_kept(conn):
-    """One historical header reads `min: 7`. Warn on entry, don't reject."""
+def test_exact_historical_min_mmr_is_accepted(conn):
+    """Seven is the exact historical minimum and should not need review."""
     res = _import(conn, """
         ffa, placement, 5/26, 3pm, min: 7, max: 3000, avg: 2140, seat: 1
         1. cc
     """)
     assert _sessions(conn)[0]["room_min_mmr"] == 7
-    assert any(w["kind"] == "implausible_mmr" for w in res["warnings"])
+    assert not any(w["kind"] == "implausible_mmr" for w in res["warnings"])
 
 
 # ----------------------------------------------------------------- session shape

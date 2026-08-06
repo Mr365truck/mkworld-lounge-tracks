@@ -347,9 +347,6 @@ def parse(text: str, year: int | None = None) -> ParseResult:
         s.played_at = parse_played_at(s.date, s.time, year)
         if s.played_at is None:
             res.warn(s.index, f"no usable date in header {s.header_raw!r}", kind="no_date")
-        if s.room_min_mmr is not None and s.room_min_mmr < 100:
-            res.warn(s.index, f"implausible room_min_mmr {s.room_min_mmr}; kept as entered",
-                     kind="implausible_mmr")
         if n and n != s.expected_races and not s.aborted:
             res.warn(s.index, f"{n} races, expected {s.expected_races}", kind="race_count")
         if s.spectated:

@@ -21,6 +21,21 @@ def test_new_session_renders_expected_rows(client):
     assert body.count('class="race-row"') == 12
 
 
+def test_session_renders_derived_mmr_after(client, session_id):
+    client.post(f"/api/sessions/{session_id}/field",
+                json={"field": "own_mmr_before", "value": 4000})
+    client.post(f"/api/sessions/{session_id}/field",
+                json={"field": "mmr_delta", "value": 46})
+    body = client.get(f"/sessions/{session_id}").text
+    assert 'id="mmr-after"' in body
+    assert 'value="4046"' in body
+
+
+def test_race_header_uses_the_same_note_width_as_rows(client, session_id):
+    body = client.get(f"/sessions/{session_id}").text
+    assert '<span class="min-w-[6rem] flex-1 sm:max-w-[20rem]">Note</span>' in body
+
+
 def test_tournament_defaults_to_eight_races(client):
     r = client.post("/sessions", data={"fmt": "tournament"}, follow_redirects=False)
     sid = int(r.headers["location"].rsplit("/", 1)[1])
@@ -209,3 +224,9 @@ def test_delete_session_removes_its_races(client, engine, session_id):
     assert client.delete(f"/api/sessions/{session_id}").status_code == 200
     with engine.begin() as c:
         assert c.execute(select(races).where(races.c.session_id == session_id)).all() == []
+
+
+def test_sessions_page_links_to_delete_confirmation(client, session_id):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert f'href="/sessions/{session_id}/delete"' in response.text

@@ -90,7 +90,7 @@ def test_missing_placements_do_not_shift_the_baseline(conn):
 
 def test_pick_rate_and_weighted_residual(conn):
     _seed_session(conn, [2, 6, 10], tracks_by_code=["BC", "WS", "AH"])
-    _seed_session(conn, [4, 8, 12], tracks_by_code=["BC", "GBR", "SHS"])
+    _seed_session(conn, [4, 8, 12], tracks_by_code=["BC", "GBR", "rSHS"])
     df = analytics.add_residuals(analytics.load_frame(conn))
     rows = {r["code"]: r for r in analytics.track_table(df)}
     assert rows["BC"]["pick_rate"] == pytest.approx(1.0)     # both sessions

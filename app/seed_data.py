@@ -47,7 +47,7 @@ TRACKS = [
     ("rWSt", "Wario Stadium", 1, 0, ["rwst", "stadium"]),
     ("rAF", "Airship Fortress", 1, 0, ["raf", "af", "airship"]),
     ("rDKP", "DK Pass", 1, 0, ["rdkp", "dkp", "pass"]),
-    ("SHS", "Sky-High Sundae", 1, 0, ["shs", "sks", "sundae"]),
+    ("rSHS", "Sky-High Sundae", 1, 0, ["shs", "sks", "sundae"]),
     ("rWSh", "Wario Shipyard", 1, 0, ["rwsh", "shipyard"]),
     ("rKTB", "Koopa Troopa Beach", 1, 0, ["rktb", "ktb"]),
     ("rPB", "Peach Beach", 1, 0, ["rpb", "pb", "peach beach"]),

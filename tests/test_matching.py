@@ -59,7 +59,7 @@ def test_ws_ranks_whistlestop_first_despite_wsh_and_wst(cands):
     ("oasis", "FO"),
     ("bazaar", "rSGB"),
     ("choco", "rCM"),
-    ("sundae", "SHS"),
+    ("sundae", "rSHS"),
     ("stadium", "rWSt"),
     ("shipyard", "rWSh"),
 ])
@@ -96,7 +96,7 @@ def test_matching_is_case_insensitive(cands):
     """The doc's case variants — `BAZAAR`, `pASS`, `Shs` — all land on one track."""
     assert search(cands, "BAZAAR")[0].track.code == "rSGB"
     assert search(cands, "pASS")[0].track.code == "rDKP"
-    assert search(cands, "Shs")[0].track.code == "SHS"
+    assert search(cands, "Shs")[0].track.code == "rSHS"
     assert search(cands, "RaF")[0].track.code == "rAF"
 
 

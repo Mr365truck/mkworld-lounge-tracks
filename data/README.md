@@ -28,7 +28,7 @@ glyph ids directly; see its docstring.
 - Placements only start being logged at session 15 (7/21). Sessions 1–14 record the
   track list only, which is why 14 sessions come through `is_complete: false`.
 - Exactly **one intermission** race: session 23, race 1, `rAF`.
-- Most-picked: `BC` 23, `WS` 21, `AH` 20, `rAF` 18, `SHS` 17, `FO` 16.
+- Most-picked: `BC` 23, `WS` 21, `AH` 20, `rAF` 18, `rSHS` 17, `FO` 16.
 
 ## Parser warnings — all four are real, none are bugs
 
