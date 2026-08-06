@@ -1,0 +1,38 @@
+# TrueNAS SCALE Custom App
+# Paste into Apps > Discover > Custom App > Install via YAML.
+# Before installation, create /mnt/tank/apps/mogi-tracker as a dataset,
+# set its record size to 16K, and make it writable by UID/GID 568.
+services:
+  mogi-tracker:
+    image: ghcr.io/mr365truck/mkworld-lounge-tracks:latest
+    container_name: mogi-tracker
+    restart: unless-stopped
+    user: "568:568"
+    pull_policy: always
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      TZ: America/Los_Angeles
+      DATABASE_PATH: /data/mogi.db
+      BACKUP_DIR: /data/backups
+      BACKUP_KEEP: "30"
+      BACKUP_HOUR: "4"
+      PORT: "8000"
+
+    volumes:
+      - /mnt/tank/apps/mogi-tracker:/data
+
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import urllib.request,sys;
+          sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=4).status == 200 else 1)
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
