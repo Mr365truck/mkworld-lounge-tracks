@@ -1,6 +1,6 @@
 # TrueNAS SCALE Custom App
 # Paste into Apps > Discover > Custom App > Install via YAML.
-# Before installation, create /mnt/tank/apps/mogi-tracker as a dataset,
+# Before installation, create /mnt/minecraft/mogi-tracker as a dataset,
 # set its record size to 16K, and make it writable by UID/GID 568.
 services:
   mogi-tracker:
@@ -22,7 +22,7 @@ services:
       PORT: "8000"
 
     volumes:
-      - /mnt/tank/apps/mogi-tracker:/data
+      - /mnt/minecraft/mogi-tracker:/data
 
     healthcheck:
       test:

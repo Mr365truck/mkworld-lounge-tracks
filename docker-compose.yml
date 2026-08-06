@@ -7,7 +7,7 @@
 # (.github/workflows/publish.yml); the NAS pulls the tag below.
 #
 # Before installing:
-#   1. Create a dataset for the database, e.g. tank/apps/mogi-tracker.
+#   1. Create a dataset for the database, e.g. minecraft/mogi-tracker.
 #   2. Set that dataset's Record Size to 16K. The 128K default causes write
 #      amplification on SQLite's small random writes. Both are settable in the UI.
 #   3. Point the volume below at the dataset's path.
@@ -31,7 +31,7 @@ services:
       BACKUP_HOUR: "4"                 # nightly VACUUM INTO, in TZ above
       PORT: "8000"
     volumes:
-      - /mnt/tank/apps/mogi-tracker:/data
+      - /mnt/minecraft/mogi-tracker:/data
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/healthz', timeout=4).status==200 else 1)"]
       interval: 30s
