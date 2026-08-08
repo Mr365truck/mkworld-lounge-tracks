@@ -1,7 +1,7 @@
-"""CSV and JSON export — spec section 7.
+"""Raw database exports.
 
-CSV is flat and wide, one row per race joined to its session and track: the format to
-hand to an analysis tool. JSON is the whole database, for archival.
+CSV is one row per stored race with its stored session fields repeated. JSON mirrors
+the database tables directly. Neither export calculates analytics or derived stats.
 """
 import csv
 import io
@@ -12,70 +12,76 @@ from fastapi import APIRouter
 from fastapi.responses import Response
 from sqlalchemy import select
 
-from .. import analytics, config, db
+from .. import db
 from ..schema import import_issues, races, sessions, shock_events, track_aliases, tracks
 
 router = APIRouter(prefix="/export")
 
 CSV_COLUMNS = [
-    "session_id", "played_at_utc", "played_at_local", "format", "expected_races",
-    "aborted", "is_complete", "room_min_mmr", "room_max_mmr", "room_avg_mmr",
-    "mmr_spread", "seat", "mate_mmr", "own_mmr_before", "mmr_delta", "score",
-    "race_num", "track_code", "track_name", "is_retro", "has_gate", "variant",
-    "placement", "start_position", "lap1_position", "shortcut_hit",
-    "mate_placement", "session_avg_placement", "loo_baseline", "residual",
-    "race_note", "session_notes",
+    # Stored session data.
+    "session_id", "played_at", "format", "expected_races", "aborted",
+    "room_min_mmr", "room_max_mmr", "room_avg_mmr", "seat", "mate_mmr",
+    "own_mmr_before", "mmr_delta", "score", "session_notes",
+    "session_created_at", "session_updated_at",
+    # Stored race data.
+    "race_id", "race_num", "track_id", "variant", "placement",
+    "start_position", "lap1_position", "shortcut_hit", "mate_placement",
+    "race_note", "race_created_at", "race_updated_at",
+    # Reference labels for the stored track_id; no values are derived.
+    "track_code", "track_name",
 ]
 
 
 @router.get("/races.csv")
 def races_csv():
+    query = (
+        select(
+            sessions.c.id.label("session_id"),
+            sessions.c.played_at,
+            sessions.c.format,
+            sessions.c.expected_races,
+            sessions.c.aborted,
+            sessions.c.room_min_mmr,
+            sessions.c.room_max_mmr,
+            sessions.c.room_avg_mmr,
+            sessions.c.seat,
+            sessions.c.mate_mmr,
+            sessions.c.own_mmr_before,
+            sessions.c.mmr_delta,
+            sessions.c.score,
+            sessions.c.notes.label("session_notes"),
+            sessions.c.created_at.label("session_created_at"),
+            sessions.c.updated_at.label("session_updated_at"),
+            races.c.id.label("race_id"),
+            races.c.race_num,
+            races.c.track_id,
+            races.c.variant,
+            races.c.placement,
+            races.c.start_position,
+            races.c.lap1_position,
+            races.c.shortcut_hit,
+            races.c.mate_placement,
+            races.c.note.label("race_note"),
+            races.c.created_at.label("race_created_at"),
+            races.c.updated_at.label("race_updated_at"),
+            tracks.c.code.label("track_code"),
+            tracks.c.full_name.label("track_name"),
+        )
+        .select_from(
+            sessions.join(races, races.c.session_id == sessions.c.id)
+            .join(tracks, races.c.track_id == tracks.c.id, isouter=True)
+        )
+        .order_by(sessions.c.id, races.c.race_num)
+    )
+
     with db.read() as conn:
-        df = analytics.add_residuals(analytics.load_frame(conn))
-        session_notes = dict(conn.execute(select(sessions.c.id, sessions.c.notes)).all())
-        race_notes = dict(conn.execute(select(races.c.id, races.c.note)).all())
-        retro = dict(conn.execute(select(tracks.c.id, tracks.c.is_retro)).all())
+        rows = conn.execute(query).mappings().all()
 
     buf = io.StringIO()
-    w = csv.DictWriter(buf, fieldnames=CSV_COLUMNS, extrasaction="ignore")
-    w.writeheader()
-
-    if not df.empty:
-        avg = df.groupby("session_id")["placement"].transform("mean")
-        for (_, r), sess_avg in zip(df.iterrows(), avg):
-            played = r["played_at"].to_pydatetime() if r["played_at"] is not None else None
-            n_placed = int(df[df["session_id"] == r["session_id"]]["placement"].notna().sum())
-            w.writerow({
-                "session_id": int(r["session_id"]),
-                "played_at_utc": played.isoformat() if played else "",
-                "played_at_local": config.to_local(played).isoformat() if played else "",
-                "format": r["format"],
-                "expected_races": int(r["expected_races"]),
-                "aborted": int(bool(r["aborted"])),
-                "is_complete": int(bool(r["aborted"]) or n_placed == int(r["expected_races"])),
-                "room_min_mmr": _num(r["room_min_mmr"]),
-                "room_max_mmr": _num(r["room_max_mmr"]),
-                "room_avg_mmr": _num(r["room_avg_mmr"]),
-                "mmr_spread": _spread(r["room_max_mmr"], r["room_min_mmr"]),
-                "seat": _num(r["seat"]),
-                "mate_mmr": "", "own_mmr_before": _num(r["own_mmr_before"]),
-                "mmr_delta": _num(r["mmr_delta"]), "score": _num(r["score"]),
-                "race_num": int(r["race_num"]),
-                "track_code": r["code"] or "", "track_name": r["full_name"] or "",
-                "is_retro": _num(retro.get(r["track_id"])),
-                "has_gate": _num(r["has_gate"]),
-                "variant": r["variant"],
-                "placement": _num(r["placement"]),
-                "start_position": _num(r["start_position"]),
-                "lap1_position": _num(r["lap1_position"]),
-                "shortcut_hit": r["shortcut_hit"] or "",
-                "mate_placement": _num(r["mate_placement"]),
-                "session_avg_placement": _round(sess_avg),
-                "loo_baseline": _round(r["loo_baseline"]),
-                "residual": _round(r["residual"]),
-                "race_note": (race_notes.get(int(r["race_id"])) or "").replace("\n", " | "),
-                "session_notes": (session_notes.get(int(r["session_id"])) or "").replace("\n", " | "),
-            })
+    writer = csv.DictWriter(buf, fieldnames=CSV_COLUMNS)
+    writer.writeheader()
+    for row in rows:
+        writer.writerow({key: _csv_value(row[key]) for key in CSV_COLUMNS})
 
     stamp = datetime.now().strftime("%Y%m%d")
     return Response(
@@ -84,46 +90,32 @@ def races_csv():
     )
 
 
-def _num(v):
-    import pandas as pd
-    if v is None or (isinstance(v, float) and pd.isna(v)) or pd.isna(v):
+def _csv_value(value):
+    if value is None:
         return ""
-    return int(v) if float(v).is_integer() else v
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    return value
 
 
-def _round(v, places: int = 4):
-    import pandas as pd
-    if v is None or pd.isna(v):
-        return ""
-    return round(float(v), places)
-
-
-def _spread(hi, lo):
-    import pandas as pd
-    if hi is None or lo is None or pd.isna(hi) or pd.isna(lo):
-        return ""
-    return int(hi) - int(lo)
-
-
-def _jsonable(v):
-    if isinstance(v, (datetime, date)):
-        return v.isoformat()
-    return v
+def _jsonable(value):
+    if isinstance(value, (datetime, date)):
+        return value.isoformat()
+    return value
 
 
 @router.get("/db.json")
 def db_json():
-    """Whole-database dump, for archival."""
-    payload = {"exported_at": datetime.now(config.local_tz()).isoformat(),
-               "tz": config.TZ_NAME}
+    """Direct dump of every application table, with no computed fields."""
+    payload = {}
     with db.read() as conn:
         for name, table in (("tracks", tracks), ("track_aliases", track_aliases),
                             ("sessions", sessions), ("races", races),
                             ("shock_events", shock_events),
                             ("import_issues", import_issues)):
             payload[name] = [
-                {k: _jsonable(v) for k, v in dict(row).items()}
-                for row in conn.execute(select(table)).mappings()
+                {key: _jsonable(value) for key, value in dict(row).items()}
+                for row in conn.execute(select(table).order_by(table.c.id)).mappings()
             ]
     stamp = datetime.now().strftime("%Y%m%d")
     return Response(

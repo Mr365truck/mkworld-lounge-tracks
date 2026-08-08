@@ -303,14 +303,26 @@ def test_404_is_html_for_pages_and_json_for_api(client):
     assert client.get("/api/sessions/9999").status_code == 404
 
 
-def test_csv_export_has_the_residual_columns(client, session_id):
-    for num, place in ((1, 2), (2, 6), (3, 10)):
-        client.post(f"/api/sessions/{session_id}/races/{num}/field",
-                    json={"field": "placement", "value": place})
-    body = client.get("/export/races.csv").text
-    header = body.splitlines()[0].split(",")
-    assert "residual" in header and "loo_baseline" in header
-    assert len(body.splitlines()) == 13      # header + 12 rows
+def test_csv_export_contains_raw_session_and_race_data_without_stats(
+        client, session_id):
+    client.post(f"/api/sessions/{session_id}/field",
+                json={"field": "score", "value": 91})
+    client.post(f"/api/sessions/{session_id}/races/1/field",
+                json={"field": "placement", "value": 2})
+
+    import csv
+    import io
+    rows = list(csv.DictReader(io.StringIO(client.get("/export/races.csv").text)))
+
+    assert len(rows) == 12
+    assert rows[0]["session_id"] == str(session_id)
+    assert rows[0]["score"] == "91"
+    assert rows[0]["race_num"] == "1"
+    assert rows[0]["placement"] == "2"
+    assert "session_created_at" in rows[0] and "race_created_at" in rows[0]
+    for computed in ("is_complete", "mmr_spread", "session_avg_placement",
+                     "loo_baseline", "residual"):
+        assert computed not in rows[0]
 
 
 def test_json_export_covers_every_table(client, session_id):
@@ -319,6 +331,26 @@ def test_json_export_covers_every_table(client, session_id):
                   "import_issues"):
         assert table in payload
     assert len(payload["tracks"]) == 30
+
+
+def test_json_export_rows_match_raw_table_columns(client, engine, session_id):
+    client.post(f"/api/sessions/{session_id}/field",
+                json={"field": "score", "value": 87})
+    client.post(f"/api/sessions/{session_id}/races/1/field",
+                json={"field": "placement", "value": 3})
+    payload = client.get("/export/db.json").json()
+
+    assert set(payload) == {
+        "tracks", "track_aliases", "sessions", "races", "shock_events",
+        "import_issues",
+    }
+    assert set(payload["sessions"][0]) == set(sessions.c.keys())
+    assert set(payload["races"][0]) == set(races.c.keys())
+    exported_session = next(row for row in payload["sessions"] if row["id"] == session_id)
+    exported_race = next(row for row in payload["races"]
+                         if row["session_id"] == session_id and row["race_num"] == 1)
+    assert exported_session["score"] == 87
+    assert exported_race["placement"] == 3
 
 
 def test_delete_session_removes_its_races(client, engine, session_id):
