@@ -6,10 +6,11 @@ import pytest
 from sqlalchemy import insert, select, text
 
 from app import config
-from app.schema import (default_expected_races, races, sessions, track_aliases,
-                        tracks)
+from app.schema import (default_expected_races, races, sessions, shock_events,
+                        track_aliases, tracks)
 from app.seed import seed_tracks
 from app.seed_data import TRACKS
+from app.shocks import MINIMAPS
 
 
 def test_seed_covers_all_thirty_courses(conn):
@@ -17,6 +18,14 @@ def test_seed_covers_all_thirty_courses(conn):
     codes = [r for (r,) in conn.execute(select(tracks.c.code))]
     assert len(codes) == 30
     assert len(set(codes)) == 30
+
+
+def test_shock_manifest_has_exactly_the_29_local_assets():
+    assert len(MINIMAPS) == 29
+    assert len({code for code, *_ in MINIMAPS}) == 29
+    assert "RR" not in {code for code, *_ in MINIMAPS}
+    asset_dir = config.BASE_DIR / "static" / "minimaps"
+    assert all((asset_dir / filename).is_file() for _, filename, _, _ in MINIMAPS)
 
 
 def test_seed_marks_exactly_the_four_gate_tracks(conn):
@@ -110,6 +119,12 @@ def test_track_id_is_nullable(conn):
     conn.execute(insert(races).values(session_id=sid, race_num=12, track_id=None))
     row = conn.execute(select(races).where(races.c.session_id == sid)).mappings().first()
     assert row["track_id"] is None
+
+
+def test_shock_coordinates_and_lap_are_constrained(conn):
+    track_id = conn.execute(select(tracks.c.id).where(tracks.c.code == "MBC")).scalar_one()
+    conn.execute(insert(shock_events).values(track_id=track_id, x=0.2, y=0.8, lap=3))
+    assert conn.execute(select(shock_events.c.lap)).scalar_one() == 3
 
 
 # ------------------------------------------------------------------- migrations

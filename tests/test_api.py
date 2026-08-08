@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import select, update
 
 from app.queries import create_session, session_stats, session_row, race_rows
-from app.schema import races, sessions, tracks
+from app.schema import races, sessions, shock_events, tracks
 
 
 @pytest.fixture
@@ -189,7 +189,7 @@ def test_add_and_drop_race_rows(client, session_id):
 
 
 def test_pages_render(client, session_id):
-    for path in ("/", "/analytics", "/settings", "/import",
+    for path in ("/", "/analytics", "/shocks", "/settings", "/import",
                  f"/sessions/{session_id}", f"/sessions/{session_id}/delete"):
         assert client.get(path).status_code == 200, path
 
@@ -220,6 +220,50 @@ def test_healthz(client):
     assert client.get("/healthz").json()["status"] == "ok"
 
 
+def test_shocks_page_has_the_29_standard_minimaps(client):
+    body = client.get("/shocks").text
+    assert body.count('class="card shock-card"') == 29
+    assert body.count('class="shock-map-target"') == 29
+    assert '/static/minimaps/mbc.png' in body
+    assert '/static/minimaps/rr.png' not in body
+    assert 'src="/static/shocks.js"' in body
+
+
+def test_add_filter_and_undo_shock(client, engine):
+    with engine.begin() as conn:
+        track_id = conn.execute(
+            select(tracks.c.id).where(tracks.c.code == "MBC")
+        ).scalar_one()
+
+    response = client.post("/api/shocks", json={
+        "track_id": track_id, "x": 0.25, "y": 0.75, "lap": 2,
+    })
+    assert response.status_code == 201
+    event = response.json()["event"]
+    assert event == {"id": event["id"], "track_id": track_id,
+                     "x": 0.25, "y": 0.75, "lap": 2}
+
+    assert client.get(f"/api/shocks?track_id={track_id}&lap=1").json()["events"] == []
+    assert client.get(f"/api/shocks?track_id={track_id}&lap=2").json()["events"] == [event]
+    assert client.delete(f'/api/shocks/{event["id"]}').status_code == 200
+    with engine.begin() as conn:
+        assert conn.execute(select(shock_events)).all() == []
+
+
+def test_shock_input_is_bounded_and_only_accepts_mapped_tracks(client, engine):
+    with engine.begin() as conn:
+        mbc = conn.execute(select(tracks.c.id).where(tracks.c.code == "MBC")).scalar_one()
+        rainbow = conn.execute(select(tracks.c.id).where(tracks.c.code == "RR")).scalar_one()
+
+    for payload in (
+        {"track_id": mbc, "x": -0.01, "y": 0.5, "lap": 1},
+        {"track_id": mbc, "x": 0.5, "y": 1.01, "lap": 1},
+        {"track_id": mbc, "x": 0.5, "y": 0.5, "lap": 4},
+        {"track_id": rainbow, "x": 0.5, "y": 0.5, "lap": 1},
+    ):
+        assert client.post("/api/shocks", json=payload).status_code == 400
+
+
 def test_404_is_html_for_pages_and_json_for_api(client):
     assert "text/html" in client.get("/nope").headers["content-type"]
     assert client.get("/api/sessions/9999").status_code == 404
@@ -237,7 +281,8 @@ def test_csv_export_has_the_residual_columns(client, session_id):
 
 def test_json_export_covers_every_table(client, session_id):
     payload = client.get("/export/db.json").json()
-    for table in ("tracks", "track_aliases", "sessions", "races", "import_issues"):
+    for table in ("tracks", "track_aliases", "sessions", "races", "shock_events",
+                  "import_issues"):
         assert table in payload
     assert len(payload["tracks"]) == 30
 

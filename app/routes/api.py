@@ -4,6 +4,7 @@ Every analytic is exposed as JSON alongside its HTML view (spec section 6), so a
 script — or an LLM given API access — can pull structured data instead of parsing prose.
 """
 from datetime import datetime
+import math
 
 from fastapi import APIRouter, Body, HTTPException, Request
 from sqlalchemy import delete, insert, select, update
@@ -12,7 +13,8 @@ from .. import analytics, config, db, queries
 from ..importer import import_text
 from ..matching import load_candidates, search
 from ..schema import (FORMATS, SHORTCUT_STATES, VARIANTS, import_issues, races,
-                      sessions, track_aliases, tracks)
+                      sessions, shock_events, track_aliases, tracks)
+from ..shocks import MINIMAP_BY_CODE
 
 router = APIRouter(prefix="/api")
 
@@ -260,6 +262,65 @@ def update_track(track_id: int, payload: dict = Body(...)):
         conn.execute(update(tracks).where(tracks.c.id == track_id)
                      .values(**values, updated_at=config.utcnow()))
     return {"ok": True, "updated": values}
+
+
+# ---------------------------------------------------------------- shock locations
+
+@router.get("/shocks")
+def shock_list(track_id: int | None = None, lap: int | None = None):
+    if lap is not None and lap not in (1, 2, 3):
+        raise HTTPException(400, "lap must be 1-3")
+    query = select(
+        shock_events.c.id, shock_events.c.track_id, shock_events.c.x,
+        shock_events.c.y, shock_events.c.lap,
+    ).order_by(shock_events.c.id)
+    if track_id is not None:
+        query = query.where(shock_events.c.track_id == track_id)
+    if lap is not None:
+        query = query.where(shock_events.c.lap == lap)
+    with db.read() as conn:
+        events = [dict(row) for row in conn.execute(query).mappings()]
+    return {"events": events}
+
+
+@router.post("/shocks", status_code=201)
+def add_shock(payload: dict = Body(...)):
+    try:
+        track_id = int(payload.get("track_id"))
+        lap = int(payload.get("lap"))
+        x = float(payload.get("x"))
+        y = float(payload.get("y"))
+    except (TypeError, ValueError):
+        raise HTTPException(400, "track_id, lap, x, and y are required numbers")
+    if lap not in (1, 2, 3):
+        raise HTTPException(400, "lap must be 1-3")
+    if not math.isfinite(x) or not math.isfinite(y) or not (0 <= x <= 1 and 0 <= y <= 1):
+        raise HTTPException(400, "x and y must be between 0 and 1")
+
+    with db.connect() as conn:
+        code = conn.execute(
+            select(tracks.c.code).where(tracks.c.id == track_id)
+        ).scalar()
+        if code is None:
+            raise HTTPException(404, "no such track")
+        if code not in MINIMAP_BY_CODE:
+            raise HTTPException(400, "this track has no shock minimap")
+        result = conn.execute(insert(shock_events).values(
+            track_id=track_id, x=x, y=y, lap=lap,
+        ))
+        event_id = result.inserted_primary_key[0]
+    return {"ok": True, "event": {
+        "id": event_id, "track_id": track_id, "x": x, "y": y, "lap": lap,
+    }}
+
+
+@router.delete("/shocks/{event_id}")
+def delete_shock(event_id: int):
+    with db.connect() as conn:
+        result = conn.execute(delete(shock_events).where(shock_events.c.id == event_id))
+    if result.rowcount == 0:
+        raise HTTPException(404, "no such shock event")
+    return {"ok": True}
 
 
 # --------------------------------------------------------------------- import

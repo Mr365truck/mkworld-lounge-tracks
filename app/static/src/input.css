@@ -3,6 +3,7 @@
 @source "../../templates";
 @source "../entry.js";
 @source "../analytics.js";
+@source "../shocks.js";
 
 /* Dark by default: this gets used in the evening, mid-lounge, next to a game. */
 @theme {
@@ -96,6 +97,58 @@
 
   .kbd {
     @apply rounded border border-ink-700 bg-ink-900 px-1 py-px font-mono text-[10px] text-ink-400;
+  }
+
+  /* --- shock maps ------------------------------------------------------ */
+  .shock-grid {
+    @apply grid gap-4 sm:grid-cols-2 xl:grid-cols-3;
+  }
+  .shock-card {
+    @apply overflow-hidden;
+  }
+  .shock-map-area {
+    @apply grid min-h-[21rem] place-items-center bg-ink-950/70 p-3;
+  }
+  .shock-map {
+    @apply relative w-full select-none;
+  }
+  .shock-map img, .shock-map canvas, .shock-map-target {
+    @apply absolute inset-0 h-full w-full;
+  }
+  .shock-map img {
+    @apply object-contain;
+  }
+  .shock-map canvas {
+    @apply pointer-events-none z-10;
+  }
+  .shock-map-target {
+    @apply z-20 cursor-crosshair rounded border-0 bg-transparent p-0
+           focus:outline-none focus-visible:ring-2 focus-visible:ring-accent-500;
+  }
+  .shock-pending-marker {
+    @apply pointer-events-none absolute z-30 h-4 w-4 -translate-x-1/2 -translate-y-1/2
+           rounded-full border-2 border-white bg-accent-500 shadow-lg shadow-black;
+  }
+  .shock-card-footer {
+    @apply flex min-h-11 items-center gap-2 border-t border-ink-800 px-3 py-2;
+  }
+  .shock-prompt {
+    @apply flex flex-1 items-center gap-1.5;
+  }
+  .shock-lap-btn, .shock-filter {
+    @apply inline-flex items-center justify-center rounded-lg border border-ink-800
+           bg-ink-900 px-2.5 py-1.5 text-xs font-medium text-ink-300 transition
+           hover:border-ink-700 hover:bg-ink-800 hover:text-ink-100 focus:outline-none
+           focus-visible:ring-2 focus-visible:ring-accent-500/50;
+  }
+  .shock-filter.active {
+    @apply border-accent-500/50 bg-accent-500/15 text-accent-300;
+  }
+  .shock-lap-btn {
+    @apply h-7 min-w-7 p-0;
+  }
+  .shock-undo:disabled {
+    @apply cursor-not-allowed opacity-30;
   }
 
   /* --- entry rows ------------------------------------------------------- */

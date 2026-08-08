@@ -22,7 +22,7 @@ Then open <http://localhost:8000>. The schema migrates and the 30-course track t
 seeds themselves on first start — there is nothing to run by hand.
 
 ```sh
-.venv/bin/pytest -q            # 99 tests
+.venv/bin/pytest -q            # 109 tests
 tools/build_css.sh             # only after editing templates or input.css
 ```
 
@@ -95,6 +95,16 @@ The entry screen is the one that decides whether this gets used. Target: a full
 - The shortcut field renders on gate tracks only — BC, GBR, WS, AH.
 - `Alt+I` marks a race as an intermission. It never costs a tab stop.
 
+## Shock maps
+
+The **Shocks** tab shows the 29 standard minimaps (Rainbow Road omitted). Click a
+location, choose lap 1–3, and the normalized point is stored in SQLite. The page can
+filter every heatmap to one lap, and each card can undo its most recent entry.
+
+Shock data lives in its own `shock_events` table and is included in the full JSON
+database export. Updating the container runs the additive Alembic migration without
+replacing the existing session or race tables.
+
 ## No auth
 
 Single user on a trusted LAN, which means anything on that network can read and write
@@ -111,11 +121,12 @@ app/
   matching.py    typeahead ranking (the BC/BCi and SP/PS guard rails)
   importer.py    Google Doc paste parser
   analytics.py   leave-one-out residuals, session model, gate split
+  shocks.py      canonical 29-map asset manifest
   routes/        pages · api · exports
 alembic/         versioned migrations
 tools/           PDF extraction, CSS build
 data/            recovered history + regeneration instructions
-tests/           99 tests; importer fixtures are real Lounge.pdf excerpts
+tests/           109 tests; importer fixtures are real Lounge.pdf excerpts
 ```
 
 ## Still open

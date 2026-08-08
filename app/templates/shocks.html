@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Shock maps · mogi-tracker{% endblock %}
+
+{% block content %}
+<section class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+  <div>
+    <p class="lbl">Item timing</p>
+    <h1 class="text-2xl font-semibold tracking-tight">Shock maps</h1>
+    <p class="mt-1 max-w-2xl text-sm text-ink-400">
+      Click where the shock was used, then choose the lap. Brighter overlapping areas
+      are the spots recorded most often.
+    </p>
+  </div>
+  <div class="shrink-0">
+    <span class="lbl">Show lap</span>
+    <div class="flex gap-1" role="group" aria-label="Filter heatmaps by lap">
+      <button type="button" class="shock-filter active" data-lap="0" aria-pressed="true">All</button>
+      {% for lap in (1, 2, 3) %}
+      <button type="button" class="shock-filter" data-lap="{{ lap }}" aria-pressed="false">Lap {{ lap }}</button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<div class="mb-5 flex flex-wrap items-center gap-x-4 gap-y-1 rounded-lg border border-ink-800 bg-ink-900/40 px-3 py-2 text-xs text-ink-400">
+  <span class="font-medium text-ink-300">Heat:</span>
+  <span class="inline-flex items-center gap-1.5"><i class="h-2.5 w-2.5 rounded-full bg-bad-500/40"></i>one use</span>
+  <span class="inline-flex items-center gap-1.5"><i class="h-2.5 w-2.5 rounded-full bg-warn-400"></i>repeated spot</span>
+  <span class="ml-auto">29 standard tracks · Rainbow Road omitted</span>
+</div>
+
+<div class="shock-grid" id="shock-grid">
+  {% for track in tracks %}
+  <article class="card shock-card" data-track-id="{{ track.id }}">
+    <header class="flex items-start justify-between gap-3 border-b border-ink-800 px-3 py-2.5">
+      <div class="min-w-0">
+        <h2 class="truncate text-sm font-semibold text-ink-100">{{ track.full_name }}</h2>
+        <span class="font-mono text-[11px] text-accent-300">{{ track.code }}</span>
+      </div>
+      <span class="shock-count chip-muted tabular-nums">{{ track.events|length }} shocks</span>
+    </header>
+
+    <div class="shock-map-area">
+      <div class="shock-map"
+           style="aspect-ratio: {{ track.width }} / {{ track.height }}; max-width: min(100%, {{ track.display_max_width }}px)">
+        <img src="/static/minimaps/{{ track.filename }}"
+             alt="{{ track.full_name }} minimap" width="{{ track.width }}" height="{{ track.height }}"
+             draggable="false">
+        <canvas aria-hidden="true"></canvas>
+        <button type="button" class="shock-map-target"
+                aria-label="Choose a shock location on {{ track.full_name }}"></button>
+        <span class="shock-pending-marker hidden" aria-hidden="true"></span>
+      </div>
+    </div>
+
+    <div class="shock-card-footer">
+      <div class="shock-prompt hidden">
+        <span class="text-xs text-ink-300">Which lap?</span>
+        {% for lap in (1, 2, 3) %}
+        <button type="button" class="shock-lap-btn" data-save-lap="{{ lap }}">{{ lap }}</button>
+        {% endfor %}
+        <button type="button" class="shock-cancel btn-ghost px-2 py-1 text-xs">Cancel</button>
+      </div>
+      <p class="shock-status min-w-0 flex-1 truncate text-xs text-ink-500" aria-live="polite">Click the map to add a shock</p>
+      <button type="button" class="shock-undo btn-ghost shrink-0 px-2 py-1 text-xs"
+              {% if not track.events %}disabled{% endif %}>Undo latest</button>
+    </div>
+  </article>
+  {% endfor %}
+</div>
+
+<script type="application/json" id="shock-data">{{ shock_payload|tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/shocks.js" defer></script>
+{% endblock %}

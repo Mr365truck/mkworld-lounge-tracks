@@ -1,4 +1,5 @@
 """HTML screens — spec section 4. Four of them, plus the import view."""
+from collections import defaultdict
 from datetime import datetime
 
 from fastapi import APIRouter, Form, HTTPException, Request
@@ -6,7 +7,9 @@ from fastapi.responses import RedirectResponse
 from sqlalchemy import func, select
 
 from .. import analytics, config, db, queries
-from ..schema import FORMATS, default_expected_races, import_issues, races, sessions
+from ..schema import (FORMATS, default_expected_races, import_issues, races,
+                      sessions, shock_events, tracks)
+from ..shocks import MINIMAPS
 from ..templating import templates
 
 router = APIRouter()
@@ -74,6 +77,46 @@ def analytics_page(request: Request, intermissions: bool = False):
         data = analytics.overview(conn, include_intermissions=intermissions)
     return templates.TemplateResponse(request, "analytics.html", {
         "a": data, "show_intermissions": intermissions, "nav": "analytics",
+    })
+
+
+@router.get("/shocks")
+def shocks_page(request: Request):
+    codes = [code for code, _filename, _width, _height in MINIMAPS]
+    with db.read() as conn:
+        track_by_code = {
+            row["code"]: dict(row)
+            for row in conn.execute(
+                select(tracks.c.id, tracks.c.code, tracks.c.full_name)
+                .where(tracks.c.code.in_(codes))
+            ).mappings()
+        }
+        events_by_track = defaultdict(list)
+        for event in conn.execute(
+            select(shock_events.c.id, shock_events.c.track_id, shock_events.c.x,
+                   shock_events.c.y, shock_events.c.lap)
+            .order_by(shock_events.c.id)
+        ).mappings():
+            events_by_track[event["track_id"]].append(dict(event))
+
+    shock_tracks = []
+    payload = {}
+    for code, filename, width, height in MINIMAPS:
+        track = track_by_code.get(code)
+        if track is None:  # Defensive: a partially seeded DB should still render.
+            continue
+        event_rows = events_by_track[track["id"]]
+        payload[str(track["id"])] = event_rows
+        shock_tracks.append({
+            **track,
+            "filename": filename,
+            "width": width,
+            "height": height,
+            "display_max_width": round(304 * width / height),
+            "events": event_rows,
+        })
+    return templates.TemplateResponse(request, "shocks.html", {
+        "tracks": shock_tracks, "shock_payload": payload, "nav": "shocks",
     })
 
 

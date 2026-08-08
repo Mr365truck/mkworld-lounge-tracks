@@ -17,6 +17,7 @@
       <span class="hidden sm:inline">mogi-tracker</span>
     </a>
     {% set navs = [('sessions','/','Sessions'), ('analytics','/analytics','Analytics'),
+                   ('shocks','/shocks','Shocks'),
                    ('import','/import','Import'), ('settings','/settings','Settings')] %}
     {% for key, href, label in navs %}
       <a href="{{ href }}"

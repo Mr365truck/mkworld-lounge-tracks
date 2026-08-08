@@ -4,7 +4,7 @@ Core, not ORM: four tables, no lazy loading, and `pandas.read_sql` reads straigh
 off the connection for section 6.
 """
 from sqlalchemy import (
-    Boolean, CheckConstraint, Column, DateTime, ForeignKey, Integer,
+    Boolean, CheckConstraint, Column, DateTime, Float, ForeignKey, Integer,
     MetaData, String, Table, Text, UniqueConstraint, func,
 )
 
@@ -41,6 +41,21 @@ track_aliases = Table(
     # Lowercased on write. Uniqueness is what makes the importer deterministic.
     Column("alias", String, nullable=False, unique=True),
     Column("created_at", DateTime, nullable=False, server_default=func.current_timestamp()),
+)
+
+shock_events = Table(
+    "shock_events", metadata,
+    Column("id", Integer, primary_key=True),
+    Column("track_id", Integer, ForeignKey("tracks.id", ondelete="CASCADE"), nullable=False),
+    # Coordinates are fractions of the minimap's rendered width/height. Keeping
+    # them normalized makes every point survive responsive resizing.
+    Column("x", Float, nullable=False),
+    Column("y", Float, nullable=False),
+    Column("lap", Integer, nullable=False),
+    Column("created_at", DateTime, nullable=False, server_default=func.current_timestamp()),
+    CheckConstraint("x >= 0 AND x <= 1", name="ck_shock_events_x"),
+    CheckConstraint("y >= 0 AND y <= 1", name="ck_shock_events_y"),
+    CheckConstraint("lap BETWEEN 1 AND 3", name="ck_shock_events_lap"),
 )
 
 sessions = Table(
