@@ -16,6 +16,51 @@
   <span><span class="text-ink-100 font-medium">{{ c.residuals }}</span> with a residual</span>
 </div>
 
+{# -------------------------------------------------------------- score chart #}
+<section class="card mb-5 overflow-hidden">
+  <div class="flex flex-wrap items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+    <div>
+      <h2 class="font-medium">Score over time</h2>
+      <p class="text-xs text-ink-500">Higher is better. Select a point to inspect its session.</p>
+    </div>
+    {% if a.score.points %}
+    <div class="ml-auto flex items-center gap-1" role="group" aria-label="Score display">
+      <button type="button" class="btn-ghost h-7 bg-ink-800 px-2 text-xs text-ink-100"
+              data-score-mode="raw" aria-pressed="true">Raw score</button>
+      <button type="button" class="btn-ghost h-7 px-2 text-xs"
+              data-score-mode="weighted" aria-pressed="false">Room-weighted</button>
+    </div>
+    {% endif %}
+  </div>
+  {% if a.score.points %}
+  <div class="p-3">
+    <div id="score-chart-data" class="hidden">
+      {% for p in a.score.points %}
+      <span data-session-id="{{ p.session_id }}"
+            data-label="{{ p.played_at | dt }}"
+            data-score="{{ p.score }}"
+            data-adjusted="{{ p.room_weighted_score if p.room_weighted_score is not none else '' }}"
+            data-room-avg="{{ p.room_avg_mmr if p.room_avg_mmr is not none else '' }}"></span>
+      {% endfor %}
+    </div>
+    <canvas id="score-chart" class="block w-full" style="height: 300px"
+            role="img" aria-label="Session score over time"></canvas>
+    <p id="score-chart-readout" class="mt-2 text-center text-xs text-ink-400" aria-live="polite">
+      {{ a.score.points[-1].played_at | dt }}: {{ a.score.points[-1].score | num(0) }} points
+    </p>
+  </div>
+  <p class="border-t border-ink-800 px-3 py-2 text-xs text-ink-600">
+    Room-weighted score = raw score × session room average MMR ÷
+    {% if a.score.reference_room_avg_mmr is not none %}{{ a.score.reference_room_avg_mmr | num(0) }}{% else %}the average room MMR{% endif %}
+    across scored sessions. It boosts scores from stronger-than-usual rooms and reduces scores from
+    weaker rooms. This is descriptive weighting, not a causal prediction; sessions without room-average
+    MMR appear only in the raw view.
+  </p>
+  {% else %}
+  <p class="px-3 py-8 text-center text-sm text-ink-500">Add a session score to begin the chart.</p>
+  {% endif %}
+</section>
+
 {# ------------------------------------------------------------ per-track table #}
 <section class="card mb-5 overflow-hidden">
   <div class="flex flex-wrap items-center gap-3 border-b border-ink-800 px-3 py-2.5">
@@ -30,48 +75,60 @@
     </a>
   </div>
 
+  <details open class="border-b border-ink-800 px-3 py-2 text-xs text-ink-500">
+    <summary class="cursor-pointer select-none text-ink-300">How to read these numbers</summary>
+    <div class="mt-2 grid gap-3 sm:grid-cols-4">
+      <p><span class="text-ink-200">SD</span> — standard deviation of placements. Lower means more consistent; higher means more volatile.</p>
+      <p><span class="text-ink-200">Residual</span> — placement minus the mean of the other races in that session. Negative is better than your session form.</p>
+      <p><span class="text-ink-200">95% CI</span> — uncertainty range around the mean residual. A wide interval is uncertain; one spanning zero does not clearly show better or worse performance.</p>
+      <p><span class="text-ink-200">Weighted</span> — residual × pick rate. Positive is expected places lost per session; negative is places gained, accounting for how often the track appears.</p>
+    </div>
+  </details>
+
   {% if a.tracks %}
   <div class="overflow-x-auto">
-  <table class="w-full min-w-[860px] text-sm">
+  <table id="track-table" class="w-full min-w-[860px] text-sm">
     <thead>
       <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
-        <th class="px-3 py-2 font-medium">Track</th>
-        <th class="px-3 py-2 text-right font-medium">Picks</th>
-        <th class="px-3 py-2 text-right font-medium">Pick rate</th>
-        <th class="px-3 py-2 text-right font-medium">n</th>
-        <th class="px-3 py-2 text-right font-medium">Mean</th>
-        <th class="px-3 py-2 text-right font-medium">SD</th>
-        <th class="px-3 py-2 text-right font-medium">Residual</th>
-        <th class="px-3 py-2 font-medium">95% CI</th>
-        <th class="px-3 py-2 text-right font-medium" title="residual × pick rate = expected places lost per session">Weighted</th>
+        <th class="px-3 py-2 font-medium" aria-sort="none"><button type="button" data-sort-type="text" class="cursor-pointer select-none hover:text-ink-100">Track <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="none"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">Picks <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="none"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">Pick rate <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="none"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">n <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="none"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">Mean <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="none"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">SD <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="none"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">Residual <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 font-medium" aria-sort="none" title="Sorts by the lower bound"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">95% CI <span data-sort-indicator></span></button></th>
+        <th class="px-3 py-2 text-right font-medium" aria-sort="descending" title="Residual × pick rate"><button type="button" data-sort-type="number" class="cursor-pointer select-none hover:text-ink-100">Weighted <span data-sort-indicator>▼</span></button></th>
       </tr>
     </thead>
     <tbody>
       {% for t in a.tracks %}
       <tr class="border-b border-ink-900 last:border-0 hover:bg-ink-900/50 {{ 'opacity-45' if t.low_n }}">
-        <td class="px-3 py-1.5">
+        <td class="px-3 py-1.5" data-sort-value="{{ t.code | lower }} {{ t.full_name | lower }}">
           <span class="font-mono text-xs text-accent-300">{{ t.code }}</span>
           <span class="ml-1.5 text-ink-300">{{ t.full_name }}</span>
           {% if t.has_gate %}<span class="chip-muted ml-1 text-[10px]">cut</span>{% endif %}
           {% if t.low_n %}<span class="chip-warn ml-1 text-[10px]">n&lt;{{ a.min_n_track }}</span>{% endif %}
         </td>
-        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ t.picks }}</td>
-        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ t.pick_rate | pct }}</td>
-        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ t.n_placements }}</td>
-        <td class="px-3 py-1.5 text-right tabular-nums">{{ t.mean_placement | num }}</td>
-        <td class="px-3 py-1.5 text-right tabular-nums text-ink-500">{{ t.sd | num }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400" data-sort-value="{{ t.picks }}">{{ t.picks }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400" data-sort-value="{{ t.pick_rate }}">{{ t.pick_rate | pct }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-400" data-sort-value="{{ t.n_placements }}">{{ t.n_placements }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums" data-sort-value="{{ t.mean_placement if t.mean_placement is not none else '' }}">{{ t.mean_placement | num }}</td>
+        <td class="px-3 py-1.5 text-right tabular-nums text-ink-500" data-sort-value="{{ t.sd if t.sd is not none else '' }}">{{ t.sd | num }}</td>
         <td class="px-3 py-1.5 text-right tabular-nums font-medium
-                   {% if t.residual is not none and t.residual < 0 %}text-good-400{% elif t.residual is not none %}text-bad-400{% endif %}">
+                   {% if t.residual is not none and t.residual < 0 %}text-good-400{% elif t.residual is not none %}text-bad-400{% endif %}"
+            data-sort-value="{{ t.residual if t.residual is not none else '' }}">
           {{ t.residual | signed }}
         </td>
-        <td class="px-3 py-1.5 tabular-nums text-xs text-ink-500">
+        <td class="px-3 py-1.5 tabular-nums text-xs text-ink-500" data-sort-value="{{ t.residual_ci_low if t.residual_ci_low is not none else '' }}">
           {% if t.residual_ci_low is not none %}
             [{{ t.residual_ci_low | signed }}, {{ t.residual_ci_high | signed }}]
             {% if t.residual_ci_low <= 0 <= t.residual_ci_high %}<span class="text-ink-700" title="CI spans zero">·</span>{% endif %}
           {% else %}—{% endif %}
         </td>
         <td class="px-3 py-1.5 text-right tabular-nums
-                   {% if t.weighted_residual is not none and t.weighted_residual < 0 %}text-good-400{% elif t.weighted_residual is not none %}text-bad-400{% endif %}">
+                   {% if t.weighted_residual is not none and t.weighted_residual < 0 %}text-good-400{% elif t.weighted_residual is not none %}text-bad-400{% endif %}"
+            data-sort-value="{{ t.weighted_residual if t.weighted_residual is not none else '' }}">
           {{ t.weighted_residual | signed }}
         </td>
       </tr>
@@ -80,7 +137,7 @@
   </table>
   </div>
   <p class="border-t border-ink-800 px-3 py-2 text-xs text-ink-600">
-    Sorted by weighted residual — expected places lost per session. Rows with n &lt; {{ a.min_n_track }} are dimmed:
+    Click any column heading to sort; click it again to reverse the order. Initially sorted by weighted residual, descending. Rows with n &lt; {{ a.min_n_track }} are dimmed:
     an under-sampled track reading as signal is a live failure mode.
   </p>
   {% else %}
@@ -99,6 +156,17 @@
       <span class="ml-auto text-xs text-ink-500">n = {{ sm.n_sessions }}</span>
     </div>
     {% if sm.n_sessions %}
+    <details open class="border-b border-ink-800 px-3 py-2 text-xs text-ink-500">
+      <summary class="cursor-pointer select-none text-ink-300">How to read the session model</summary>
+      <div class="mt-2 grid gap-3 sm:grid-cols-3">
+        <p><span class="text-ink-200">Predictors</span> — room max is the strongest rating, room avg is overall lobby strength, seat is your logged seat, and spread is max minus min MMR.</p>
+        <p><span class="text-ink-200">n</span> is sessions with both values. <span class="text-ink-200">r</span> runs from −1 to +1 and gives direction and strength. Because a higher placement number is worse, positive r means the predictor rose as results worsened.</p>
+        <p><span class="text-ink-200">R²</span> is the fraction of placement variation explained, from 0 to 1. <span class="text-ink-200">Adjusted R²</span> penalizes the four-predictor model for complexity.</p>
+        <p><span class="text-ink-200">p</span> measures how surprising the relationship would be if the true linear relationship were zero. Smaller is stronger evidence; it does not measure effect size.</p>
+        <p><span class="text-ink-200">Multivariate</span> fits all four predictors together. Its R² can look impressive with little data, so rely on the warning and adjusted R².</p>
+        <p><span class="text-ink-200">—</span> means the number is not applicable or there is not enough varying data to estimate it.</p>
+      </div>
+    </details>
     <table class="w-full text-sm">
       <thead>
         <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
@@ -106,16 +174,23 @@
           <th class="px-3 py-2 text-right font-medium">n</th>
           <th class="px-3 py-2 text-right font-medium">r</th>
           <th class="px-3 py-2 text-right font-medium">R²</th>
+          <th class="px-3 py-2 text-right font-medium">Adj R²</th>
           <th class="px-3 py-2 text-right font-medium">p</th>
         </tr>
       </thead>
       <tbody>
         {% for u in sm.univariate %}
         <tr class="border-b border-ink-900 last:border-0 {{ 'opacity-45' if not u.usable }}">
-          <td class="px-3 py-1.5 font-mono text-xs text-ink-300">{{ u.predictor }}</td>
+          <td class="px-3 py-1.5 text-xs text-ink-300">
+            {% if u.predictor == 'room_max_mmr' %}Room max MMR
+            {% elif u.predictor == 'room_avg_mmr' %}Room average MMR
+            {% elif u.predictor == 'seat' %}Seat
+            {% else %}MMR spread{% endif %}
+          </td>
           <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ u.n }}</td>
           <td class="px-3 py-1.5 text-right tabular-nums">{{ u.r | num }}</td>
           <td class="px-3 py-1.5 text-right tabular-nums">{{ u.r2 | num }}</td>
+          <td class="px-3 py-1.5 text-right text-ink-600">—</td>
           <td class="px-3 py-1.5 text-right tabular-nums text-ink-500">{{ u.p_value | num(3) }}</td>
         </tr>
         {% endfor %}
@@ -125,7 +200,8 @@
           <td class="px-3 py-1.5 text-right tabular-nums text-ink-400">{{ sm.multivariate.n }}</td>
           <td class="px-3 py-1.5 text-right text-ink-600">—</td>
           <td class="px-3 py-1.5 text-right tabular-nums">{{ sm.multivariate.r2 | num }}</td>
-          <td class="px-3 py-1.5 text-right tabular-nums text-ink-500" title="adjusted R²">{{ sm.multivariate.adj_r2 | num }}</td>
+          <td class="px-3 py-1.5 text-right tabular-nums">{{ sm.multivariate.adj_r2 | num }}</td>
+          <td class="px-3 py-1.5 text-right text-ink-600">—</td>
         </tr>
         {% endif %}
       </tbody>
@@ -283,4 +359,8 @@
   </table>
 </section>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/analytics.js" defer></script>
 {% endblock %}

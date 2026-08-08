@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% block title %}{{ played_local.strftime('%-d %b') }} {{ session.format }} — mogi-tracker{% endblock %}
+{% block title %}{{ played_local | dt('%-d %b') }} {{ session.format }} — mogi-tracker{% endblock %}
 
 {% block headeractions %}
   <span id="save-state" class="hidden items-center gap-1.5 text-xs text-ink-500">

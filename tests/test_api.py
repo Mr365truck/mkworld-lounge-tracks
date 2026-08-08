@@ -1,10 +1,10 @@
 """Route tests: field autosave, completeness, exports, and the constraints that stop
 bad data getting in."""
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from app.queries import create_session, session_stats, session_row, race_rows
-from app.schema import races, tracks
+from app.schema import races, sessions, tracks
 
 
 @pytest.fixture
@@ -192,6 +192,28 @@ def test_pages_render(client, session_id):
     for path in ("/", "/analytics", "/settings", "/import",
                  f"/sessions/{session_id}", f"/sessions/{session_id}/delete"):
         assert client.get(path).status_code == 200, path
+
+
+def test_analytics_page_has_sorting_explanations_and_score_chart(client, engine, session_id):
+    with engine.begin() as conn:
+        track_id = conn.execute(select(tracks.c.id).where(tracks.c.code == "BC")).scalar_one()
+        conn.execute(update(sessions).where(sessions.c.id == session_id)
+                     .values(score=88, room_avg_mmr=4000))
+        conn.execute(update(races)
+                     .where((races.c.session_id == session_id) & (races.c.race_num == 1))
+                     .values(track_id=track_id, placement=4))
+
+    body = client.get("/analytics").text
+    assert 'id="track-table"' in body
+    assert body.count('data-sort-type=') == 9
+    assert "standard deviation of placements" in body
+    assert "How to read the session model" in body
+    assert "Adj R²" in body
+    assert 'id="score-chart"' in body
+    assert 'data-score-mode="weighted"' in body
+    assert 'src="/static/analytics.js"' in body
+    payload = client.get("/api/analytics").json()
+    assert payload["score"]["points"][0]["score"] == 88
 
 
 def test_healthz(client):

@@ -11,7 +11,14 @@ def fmt_dt(value, pattern: str = "%a %-d %b, %-I:%M%p") -> str:
     if value is None:
         return "—"
     local = config.to_local(value)
-    return local.strftime(pattern).replace("AM", "am").replace("PM", "pm")
+    # The Unix `-` flag suppresses zero padding, but Windows' strftime rejects it.
+    # Replace the two forms used by the UI before handing the rest to strftime.
+    portable = pattern.replace("%-d", "{day}").replace("%-I", "{hour12}")
+    rendered = local.strftime(portable).format(
+        day=local.day,
+        hour12=local.hour % 12 or 12,
+    )
+    return rendered.replace("AM", "am").replace("PM", "pm")
 
 
 def fmt_num(value, places: int = 2, dash: str = "—") -> str:

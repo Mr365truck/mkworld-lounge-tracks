@@ -201,3 +201,24 @@ def test_track_trend_is_ordered_and_rolling(conn):
     assert [p["played_at"] for p in points] == sorted(p["played_at"] for p in points)
     # A track can improve substantially and still show a bad lifetime mean.
     assert points[-1]["rolling"] < points[0]["rolling"]
+
+
+def test_score_trend_has_raw_and_room_weighted_values(conn):
+    import datetime as dt
+
+    _seed_session(conn, [4, 5, 6], tracks_by_code=["BC", "WS", "AH"],
+                  played_at=dt.datetime(2026, 8, 1, 12, 0), score=100,
+                  room_avg_mmr=3000)
+    _seed_session(conn, [5, 6, 7], tracks_by_code=["BC", "WS", "AH"],
+                  played_at=dt.datetime(2026, 8, 2, 12, 0), score=80,
+                  room_avg_mmr=4000)
+    _seed_session(conn, [6, 7, 8], tracks_by_code=["BC", "WS", "AH"],
+                  played_at=dt.datetime(2026, 8, 3, 12, 0), score=90,
+                  room_avg_mmr=None)
+
+    trend = analytics.score_trend(analytics.load_frame(conn))
+    assert trend["reference_room_avg_mmr"] == pytest.approx(3500)
+    assert [p["score"] for p in trend["points"]] == [100, 80, 90]
+    assert trend["points"][0]["room_weighted_score"] == pytest.approx(100 * 3000 / 3500)
+    assert trend["points"][1]["room_weighted_score"] == pytest.approx(80 * 4000 / 3500)
+    assert trend["points"][2]["room_weighted_score"] is None

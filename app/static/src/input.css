@@ -2,6 +2,7 @@
 
 @source "../../templates";
 @source "../entry.js";
+@source "../analytics.js";
 
 /* Dark by default: this gets used in the evening, mid-lounge, next to a game. */
 @theme {

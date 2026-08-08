@@ -242,7 +242,10 @@ def session_model(df: pd.DataFrame) -> dict:
         out["multivariate"] = {"n": int(len(sub)), "r2": None, "adj_r2": None,
                                "coefficients": None, "unreliable": True}
     # Session-level rows are useful even when the fit is not.
-    out["sessions"] = sf.to_dict("records")
+    # DataFrame records otherwise retain NaN for optional fields. Starlette's JSON
+    # response correctly rejects NaN because it is not valid JSON; expose null.
+    json_safe_sf = sf.astype(object).where(pd.notna(sf), None)
+    out["sessions"] = json_safe_sf.to_dict("records")
     out["overall_mean_placement"] = float(y_all.mean())
     return out
 
@@ -349,6 +352,55 @@ def mmr_trend(df: pd.DataFrame) -> list[dict]:
     return out
 
 
+def score_trend(df: pd.DataFrame) -> dict:
+    """Session score over time, raw and descriptively weighted by room strength.
+
+    The weighted value keeps score-like units while boosting results earned in a
+    stronger-than-usual room and reducing results from a weaker-than-usual room:
+
+        weighted = score * room_avg_mmr / mean_room_avg_mmr
+
+    This is intentionally presented as a descriptive weighting, not as a causal
+    estimate or fitted prediction. Sessions without a room average still appear in
+    the raw series and have no weighted value.
+    """
+    if df.empty:
+        return {"points": [], "reference_room_avg_mmr": None}
+
+    scored = (
+        df[df["score"].notna()]
+        .groupby("session_id", as_index=False)
+        .agg(
+            played_at=("played_at", "first"),
+            score=("score", "first"),
+            room_avg_mmr=("room_avg_mmr", "first"),
+        )
+        .sort_values("played_at")
+    )
+    if scored.empty:
+        return {"points": [], "reference_room_avg_mmr": None}
+
+    room_values = scored["room_avg_mmr"].dropna().astype(float)
+    reference = float(room_values.mean()) if len(room_values) else None
+    points = []
+    for _, row in scored.iterrows():
+        room_avg = None if pd.isna(row["room_avg_mmr"]) else int(row["room_avg_mmr"])
+        raw_score = float(row["score"])
+        weighted = (
+            raw_score * room_avg / reference
+            if room_avg is not None and reference not in (None, 0)
+            else None
+        )
+        points.append({
+            "session_id": int(row["session_id"]),
+            "played_at": row["played_at"],
+            "score": raw_score,
+            "room_avg_mmr": room_avg,
+            "room_weighted_score": weighted,
+        })
+    return {"points": points, "reference_room_avg_mmr": reference}
+
+
 def overview(conn, include_intermissions: bool = False) -> dict:
     """Everything section 6 asks for, in one pass over the data."""
     df = add_residuals(load_frame(conn))
@@ -360,6 +412,7 @@ def overview(conn, include_intermissions: bool = False) -> dict:
         "gates": gate_analysis(df),
         "lead": lead_defensibility(df),
         "mmr": mmr_trend(df),
+        "score": score_trend(df),
         "counts": {
             "races": int(len(df)),
             "placements": int(df["placement"].notna().sum()) if not df.empty else 0,
