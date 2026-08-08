@@ -1,4 +1,4 @@
-{# One race. Field order is the tab order: track -> place -> start -> lap1 ->
+{# One race. Field order is the tab order: track -> start -> place -> lap1 ->
    cut -> mate -> note. `variant` sits at the right edge with tabindex="-1" so it
    never costs a tab stop on the ~99% of races that are ordinary 3-lap races. #}
 <div class="race-row" data-race="{{ r.race_num }}" data-variant="{{ r.variant }}">
@@ -12,10 +12,10 @@
     <span class="track-name">{{ r.full_name or '' }}</span>
   </div>
 
-  <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="placement"
-         value="{{ r.placement if r.placement is not none else '' }}" placeholder="place" aria-label="placement">
   <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="start_position"
          value="{{ r.start_position if r.start_position is not none else '' }}" placeholder="start" aria-label="start position">
+  <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="placement"
+         value="{{ r.placement if r.placement is not none else '' }}" placeholder="place" aria-label="placement">
   <input type="text" inputmode="numeric" class="field mobile-hint w-14 text-center" data-field="lap1_position"
          value="{{ r.lap1_position if r.lap1_position is not none else '' }}" placeholder="lap1" aria-label="lap 1 position">
 

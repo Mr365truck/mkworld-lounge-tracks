@@ -87,6 +87,16 @@
     }
   }
 
+  function renderInferredStart(inference) {
+    if (!inference) return;
+    const nextStart = document.querySelector(
+      `.race-row[data-race="${inference.race_num}"] [data-field="start_position"]`);
+    if (!nextStart) return;
+    nextStart.value = inference.start_position ?? '';
+    nextStart.classList.remove('field-error');
+    nextStart.title = '';
+  }
+
   /* ------------------------------------------------------------ field saves */
   async function saveRaceField(el, value) {
     const row = el.closest('.race-row');
@@ -99,6 +109,7 @@
                              { field, value });
       if (d) { d.classList.remove('dirty', 'error'); d.classList.add('saved'); }
       applyStats(out.stats);
+      renderInferredStart(out.inferred_start);
       return out;
     } catch (err) {
       if (d) { d.classList.remove('dirty', 'saved'); d.classList.add('error'); }
@@ -179,6 +190,18 @@
       saveSessionField(el, v);
       if (el === mmrBefore || el === mmrDelta) fillMmrAfter();
     } else if (el.dataset.field && !el.classList.contains('track-input')) {
+      // Fill the next row immediately so fast keyboard entry does not outrun the
+      // autosave round-trip. The server repeats and persists this inference.
+      if (el.dataset.field === 'placement') {
+        const value = el.value.trim();
+        const place = /^\d+$/.test(value) ? Number(value) : null;
+        if (value === '' || (place >= 1 && place <= 12)) {
+          renderInferredStart({
+            race_num: Number(el.closest('.race-row').dataset.race) + 1,
+            start_position: value === '' ? null : place,
+          });
+        }
+      }
       saveRaceField(el, el.value);
     }
   });
@@ -244,10 +267,13 @@
     input.dataset.committedCode = match.code;
     closeMenu(input);
     const row = input.closest('.race-row');
-    // Move on before the round-trip resolves — the next thing typed is almost
-    // always the placement, and waiting on the network to hand over focus is what
-    // would put a keystroke in the wrong box.
-    if (advance) row.querySelector('[data-field="placement"]')?.focus();
+    // Move on before the round-trip resolves. Starts after race one are normally
+    // already inferred from the preceding placement, so skip straight to place;
+    // if inference was impossible, stop on the empty start field instead.
+    if (advance) {
+      const start = row.querySelector('[data-field="start_position"]');
+      (start?.value.trim() ? row.querySelector('[data-field="placement"]') : start)?.focus();
+    }
     const out = await saveRaceField(input, String(match.id));
     row.querySelector('.track-name').textContent = match.full_name || '';
     // The cut field exists only on gate tracks, so it has to appear (or vanish) at

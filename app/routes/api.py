@@ -157,8 +157,28 @@ def save_race_field(session_id: int, race_num: int, payload: dict = Body(...)):
         else:
             raise HTTPException(400, f"unknown field {field!r}")
 
+        now = config.utcnow()
         conn.execute(update(races).where(races.c.id == row["id"])
-                     .values(**{field: value}, updated_at=config.utcnow()))
+                     .values(**{field: value}, updated_at=now))
+
+        # A race starts where the previous one finished. Persist the inference so
+        # exports and analytics see the same value as the entry screen. Race one
+        # remains manual because there is no preceding result to infer it from.
+        inferred_start = None
+        if field == "placement":
+            next_race_num = race_num + 1
+            next_race_id = conn.execute(select(races.c.id).where(
+                (races.c.session_id == session_id)
+                & (races.c.race_num == next_race_num)
+            )).scalar()
+            if next_race_id is not None:
+                conn.execute(update(races).where(races.c.id == next_race_id).values(
+                    start_position=value, updated_at=now
+                ))
+                inferred_start = {
+                    "race_num": next_race_num,
+                    "start_position": value,
+                }
         queries.touch_session(conn, session_id)
 
         session = queries.session_row(conn, session_id)
@@ -166,6 +186,7 @@ def save_race_field(session_id: int, race_num: int, payload: dict = Body(...)):
         updated = next(r for r in rows if r["race_num"] == race_num)
         return {
             "ok": True, "field": field, "value": value,
+            "inferred_start": inferred_start,
             "race": {
                 "race_num": race_num,
                 "track_id": updated["track_id"], "code": updated["code"],

@@ -36,6 +36,13 @@ def test_race_header_uses_the_same_note_width_as_rows(client, session_id):
     assert '<span class="min-w-[6rem] flex-1 sm:max-w-[20rem]">Note</span>' in body
 
 
+def test_start_column_precedes_place_column(client, session_id):
+    body = client.get(f"/sessions/{session_id}").text
+    assert body.index('>Start</span>') < body.index('>Place</span>')
+    first_row = body[body.index('class="race-row"'):]
+    assert first_row.index('data-field="start_position"') < first_row.index('data-field="placement"')
+
+
 def test_tournament_defaults_to_eight_races(client):
     r = client.post("/sessions", data={"fmt": "tournament"}, follow_redirects=False)
     sid = int(r.headers["location"].rsplit("/", 1)[1])
@@ -51,6 +58,28 @@ def test_saving_a_placement_updates_the_running_average(client, session_id):
     assert stats["placements_recorded"] == 2
     assert stats["avg_placement"] == pytest.approx(6.0)
     assert stats["is_complete"] is False
+
+
+def test_saving_a_placement_infers_the_next_race_start(client, engine, session_id):
+    r = client.post(f"/api/sessions/{session_id}/races/1/field",
+                    json={"field": "placement", "value": 4})
+
+    assert r.json()["inferred_start"] == {"race_num": 2, "start_position": 4}
+    with engine.begin() as c:
+        rows = race_rows(c, session_id)
+    assert rows[1]["start_position"] == 4
+
+
+def test_clearing_a_placement_clears_the_inferred_start(client, engine, session_id):
+    client.post(f"/api/sessions/{session_id}/races/1/field",
+                json={"field": "placement", "value": 4})
+    r = client.post(f"/api/sessions/{session_id}/races/1/field",
+                    json={"field": "placement", "value": ""})
+
+    assert r.json()["inferred_start"] == {"race_num": 2, "start_position": None}
+    with engine.begin() as c:
+        rows = race_rows(c, session_id)
+    assert rows[1]["start_position"] is None
 
 
 def test_completeness_needs_every_expected_race(client, session_id):
