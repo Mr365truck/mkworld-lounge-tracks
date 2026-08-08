@@ -6,6 +6,7 @@ The routes are grouped so an auth middleware can be added later without touching
 """
 import logging
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
@@ -25,6 +26,11 @@ _scheduler = None
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global _scheduler
+    database_path = Path(config.DATABASE_PATH)
+    if database_path.is_file() and database_path.stat().st_size > 0:
+        # Migrations should be additive, but an automatic pre-upgrade copy makes a
+        # rollback possible even if a future migration contains a destructive bug.
+        backup.run_backup()
     migrate.upgrade_to_head()
     # Seeding is idempotent and also runs in migration 0002; repeating it here means
     # a track added to Appendix A lands on the next restart without a new revision.

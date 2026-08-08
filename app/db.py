@@ -1,7 +1,7 @@
 """Engine and connection helpers.
 
-SQLite with WAL and synchronous=NORMAL (spec section 2) -- safe on ZFS, and the
-single-file DB means ZFS snapshots are the backup strategy.
+SQLite with WAL and synchronous=FULL. The workload is tiny, so durability on power
+loss matters more than saving a filesystem sync per autosave.
 """
 import os
 from contextlib import contextmanager
@@ -18,7 +18,7 @@ _engine: Engine | None = None
 def _configure(dbapi_conn, _record):
     cur = dbapi_conn.cursor()
     cur.execute("PRAGMA journal_mode=WAL")
-    cur.execute("PRAGMA synchronous=NORMAL")
+    cur.execute("PRAGMA synchronous=FULL")
     cur.execute("PRAGMA foreign_keys=ON")
     cur.execute("PRAGMA busy_timeout=5000")
     cur.close()

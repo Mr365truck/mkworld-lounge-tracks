@@ -9,7 +9,7 @@ import math
 from fastapi import APIRouter, Body, HTTPException, Request
 from sqlalchemy import delete, insert, select, update
 
-from .. import analytics, config, db, queries
+from .. import analytics, backup, config, db, queries
 from ..importer import import_text
 from ..matching import load_candidates, search
 from ..schema import (FORMATS, SHORTCUT_STATES, VARIANTS, import_issues, races,
@@ -227,6 +227,12 @@ def drop_last_race(session_id: int):
 
 @router.delete("/sessions/{session_id}")
 def delete_session(session_id: int):
+    with db.read() as conn:
+        if queries.session_row(conn, session_id) is None:
+            raise HTTPException(404, "no such session")
+    # Session deletion cascades through races and import notes. Make a recovery
+    # point first; if backup creation fails, the exception prevents the deletion.
+    backup.run_backup()
     with db.connect() as conn:
         conn.execute(delete(races).where(races.c.session_id == session_id))
         conn.execute(delete(sessions).where(sessions.c.id == session_id))

@@ -24,7 +24,8 @@ def run_backup(keep: int | None = None) -> str | None:
     keep = config.BACKUP_KEEP if keep is None else keep
     outdir = Path(config.BACKUP_DIR)
     outdir.mkdir(parents=True, exist_ok=True)
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
+    # Microseconds prevent a quick restart from colliding with the startup backup.
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S%fZ")
     target = outdir / f"mogi-{stamp}.db"
 
     with db.connect() as conn:
