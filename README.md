@@ -97,7 +97,7 @@ The entry screen is the one that decides whether this gets used. Target: a full
 
 ## Shock maps
 
-The **Shocks** tab shows the 29 standard minimaps (Rainbow Road omitted). Click a
+The **Shocks** tab shows all 30 standard minimaps. Click a
 location, choose lap 1–3, and the normalized point is stored in SQLite. The page can
 filter every heatmap to one lap, and each card can undo its most recent entry.
 
@@ -121,7 +121,7 @@ app/
   matching.py    typeahead ranking (the BC/BCi and SP/PS guard rails)
   importer.py    Google Doc paste parser
   analytics.py   leave-one-out residuals, session model, gate split
-  shocks.py      canonical 29-map asset manifest
+  shocks.py      canonical 30-map asset manifest
   routes/        pages · api · exports
 alembic/         versioned migrations
 tools/           PDF extraction, CSS build

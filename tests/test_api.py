@@ -220,12 +220,12 @@ def test_healthz(client):
     assert client.get("/healthz").json()["status"] == "ok"
 
 
-def test_shocks_page_has_the_29_standard_minimaps(client):
+def test_shocks_page_has_all_30_standard_minimaps(client):
     body = client.get("/shocks").text
-    assert body.count('class="card shock-card"') == 29
-    assert body.count('class="shock-map-target"') == 29
+    assert body.count('class="card shock-card"') == 30
+    assert body.count('class="shock-map-target"') == 30
     assert '/static/minimaps/mbc.png' in body
-    assert '/static/minimaps/rr.png' not in body
+    assert '/static/minimaps/rr.png' in body
     assert 'src="/static/shocks.js"' in body
 
 
@@ -250,7 +250,7 @@ def test_add_filter_and_undo_shock(client, engine):
         assert conn.execute(select(shock_events)).all() == []
 
 
-def test_shock_input_is_bounded_and_only_accepts_mapped_tracks(client, engine):
+def test_shock_input_is_bounded_and_accepts_rainbow_road(client, engine):
     with engine.begin() as conn:
         mbc = conn.execute(select(tracks.c.id).where(tracks.c.code == "MBC")).scalar_one()
         rainbow = conn.execute(select(tracks.c.id).where(tracks.c.code == "RR")).scalar_one()
@@ -259,9 +259,14 @@ def test_shock_input_is_bounded_and_only_accepts_mapped_tracks(client, engine):
         {"track_id": mbc, "x": -0.01, "y": 0.5, "lap": 1},
         {"track_id": mbc, "x": 0.5, "y": 1.01, "lap": 1},
         {"track_id": mbc, "x": 0.5, "y": 0.5, "lap": 4},
-        {"track_id": rainbow, "x": 0.5, "y": 0.5, "lap": 1},
     ):
         assert client.post("/api/shocks", json=payload).status_code == 400
+
+    response = client.post("/api/shocks", json={
+        "track_id": rainbow, "x": 0.5, "y": 0.5, "lap": 1,
+    })
+    assert response.status_code == 201
+    assert client.delete(f'/api/shocks/{response.json()["event"]["id"]}').status_code == 200
 
 
 def test_404_is_html_for_pages_and_json_for_api(client):

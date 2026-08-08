@@ -20,10 +20,10 @@ def test_seed_covers_all_thirty_courses(conn):
     assert len(set(codes)) == 30
 
 
-def test_shock_manifest_has_exactly_the_29_local_assets():
-    assert len(MINIMAPS) == 29
-    assert len({code for code, *_ in MINIMAPS}) == 29
-    assert "RR" not in {code for code, *_ in MINIMAPS}
+def test_shock_manifest_has_exactly_the_30_local_assets():
+    assert len(MINIMAPS) == 30
+    assert len({code for code, *_ in MINIMAPS}) == 30
+    assert "RR" in {code for code, *_ in MINIMAPS}
     asset_dir = config.BASE_DIR / "static" / "minimaps"
     assert all((asset_dir / filename).is_file() for _, filename, _, _ in MINIMAPS)
 

@@ -1,7 +1,8 @@
 """Canonical three-lap minimaps used by the shock-location screen."""
 
-# Game/gallery order. Rainbow Road is intentionally omitted: this feature uses the
-# requested 29 standard maps from the sibling Discord status project's manifest.
+# Game/gallery order: the 30 standard tracks from the sibling Discord status
+# project's manifest. Connector, intermission, battle, and alternate-route maps
+# are intentionally omitted.
 # (code, static filename, source width, source height)
 MINIMAPS = [
     ("MBC", "mbc.png", 293, 361),
@@ -33,6 +34,7 @@ MINIMAPS = [
     ("AH", "ah.png", 218, 428),
     ("rMC", "rmc.png", 371, 294),
     ("PS", "ps.png", 297, 385),
+    ("RR", "rr.png", 363, 795),
 ]
 
 MINIMAP_BY_CODE = {
