@@ -28,8 +28,17 @@ def home(request: Request):
             "races": conn.execute(select(func.count()).select_from(races)).scalar(),
             "placements": conn.execute(
                 select(func.count(races.c.placement))).scalar(),
-            "incomplete": sum(1 for r in rows if not r["is_complete"]),
         }
+        latest_mmr = next(
+            (r for r in rows if r["own_mmr_before"] is not None), None)
+        totals["current_mmr"] = (
+            latest_mmr["own_mmr_before"] + (latest_mmr["mmr_delta"] or 0)
+            if latest_mmr else None
+        )
+        recent_deltas = [
+            r["mmr_delta"] for r in rows[:10] if r["mmr_delta"] is not None
+        ]
+        totals["last_10_delta"] = sum(recent_deltas) if recent_deltas else None
     return templates.TemplateResponse(request, "sessions.html", {
         "sessions": rows, "totals": totals, "n_issues": n_issues,
         "nav": "sessions",
@@ -43,7 +52,7 @@ def new_session(fmt: str = Form("ffa"), played_at: str = Form("")):
     when = None
     if played_at:
         try:
-            when = config.to_utc(datetime.fromisoformat(played_at))
+            when = config.to_utc(config.round_to_hour(datetime.fromisoformat(played_at)))
         except ValueError:
             when = None
     with db.connect() as conn:

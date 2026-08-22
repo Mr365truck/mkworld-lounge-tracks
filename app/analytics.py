@@ -364,8 +364,15 @@ def score_trend(df: pd.DataFrame) -> dict:
     estimate or fitted prediction. Sessions without a room average still appear in
     the raw series and have no weighted value.
     """
+    empty = {
+        "points": [], "reference_room_avg_mmr": None,
+        "summary": {
+            "scored_sessions": 0, "median": None, "mean": None,
+            "best": None, "worst": None, "sd": None,
+        },
+    }
     if df.empty:
-        return {"points": [], "reference_room_avg_mmr": None}
+        return empty
 
     scored = (
         df[df["score"].notna()]
@@ -378,7 +385,7 @@ def score_trend(df: pd.DataFrame) -> dict:
         .sort_values("played_at")
     )
     if scored.empty:
-        return {"points": [], "reference_room_avg_mmr": None}
+        return empty
 
     room_values = scored["room_avg_mmr"].dropna().astype(float)
     reference = float(room_values.mean()) if len(room_values) else None
@@ -398,7 +405,22 @@ def score_trend(df: pd.DataFrame) -> dict:
             "room_avg_mmr": room_avg,
             "room_weighted_score": weighted,
         })
-    return {"points": points, "reference_room_avg_mmr": reference}
+    scores = scored["score"].astype(float)
+    summary = {
+        "scored_sessions": int(len(scores)),
+        "median": float(scores.median()),
+        "mean": float(scores.mean()),
+        "best": float(scores.max()),
+        "worst": float(scores.min()),
+        # Sample SD is undefined for a single score, so show no value until a
+        # second scored session exists.
+        "sd": float(scores.std(ddof=1)) if len(scores) > 1 else None,
+    }
+    return {
+        "points": points,
+        "reference_room_avg_mmr": reference,
+        "summary": summary,
+    }
 
 
 def overview(conn, include_intermissions: bool = False) -> dict:

@@ -20,13 +20,23 @@
   {% for label, value, tone in [
       ('Sessions', totals.sessions, 'text-ink-100'),
       ('Races', totals.races, 'text-ink-100'),
-      ('Placements logged', totals.placements, 'text-ink-100'),
-      ('Incomplete', totals.incomplete, 'text-warn-400' if totals.incomplete else 'text-ink-100')] %}
+      ('Placements logged', totals.placements, 'text-ink-100')] %}
     <div class="card px-3 py-2.5">
       <div class="text-[11px] uppercase tracking-wide text-ink-500">{{ label }}</div>
       <div class="mt-0.5 text-2xl font-semibold tabular-nums {{ tone }}">{{ value }}</div>
     </div>
   {% endfor %}
+  <div class="card px-3 py-2.5">
+    <div class="text-[11px] uppercase tracking-wide text-ink-500">Current MMR</div>
+    <div class="mt-0.5 text-2xl font-semibold tabular-nums text-ink-100">
+      {{ totals.current_mmr | intcomma }}
+    </div>
+    <div class="text-xs tabular-nums
+      {% if totals.last_10_delta is not none and totals.last_10_delta >= 0 %}text-good-400{% elif totals.last_10_delta is not none %}text-bad-400{% else %}text-ink-500{% endif %}">
+      {% if totals.last_10_delta is not none %}{{ '%+d' % totals.last_10_delta }}{% else %}—{% endif %}
+      over last 10
+    </div>
+  </div>
 </div>
 
 {% if n_issues %}

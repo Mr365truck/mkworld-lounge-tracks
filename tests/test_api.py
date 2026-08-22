@@ -1,5 +1,7 @@
 """Route tests: field autosave, completeness, exports, and the constraints that stop
 bad data getting in."""
+import datetime as dt
+
 import pytest
 from sqlalchemy import select, update
 
@@ -29,6 +31,35 @@ def test_session_renders_derived_mmr_after(client, session_id):
     body = client.get(f"/sessions/{session_id}").text
     assert 'id="mmr-after"' in body
     assert 'value="4046"' in body
+
+
+def test_sessions_summary_shows_current_mmr_and_last_ten_delta(client, engine, session_id):
+    with engine.begin() as conn:
+        conn.execute(update(sessions).where(sessions.c.id == session_id).values(
+            own_mmr_before=4000, mmr_delta=0,
+        ))
+    body = client.get("/").text
+    assert "Current MMR" in body
+    assert "+0" in body
+    assert "over last 10" in body
+    assert "Incomplete" not in body
+    assert "text-good-400" in body
+
+
+def test_played_at_rounds_to_nearest_hour(client, engine, session_id):
+    response = client.post(
+        f"/api/sessions/{session_id}/field",
+        json={"field": "played_at", "value": "2026-08-21T12:40"},
+    )
+    assert response.status_code == 200
+    with engine.begin() as conn:
+        played_at = conn.execute(
+            select(sessions.c.played_at).where(sessions.c.id == session_id)
+        ).scalar_one()
+    assert played_at == dt.datetime(2026, 8, 21, 13, 0)
+
+    body = client.get(f"/sessions/{session_id}").text
+    assert 'type="datetime-local" step="3600"' in body
 
 
 def test_race_header_uses_the_same_note_width_as_rows(client, session_id):
@@ -227,7 +258,8 @@ def test_analytics_page_has_sorting_explanations_and_score_chart(client, engine,
     with engine.begin() as conn:
         track_id = conn.execute(select(tracks.c.id).where(tracks.c.code == "BC")).scalar_one()
         conn.execute(update(sessions).where(sessions.c.id == session_id)
-                     .values(score=88, room_avg_mmr=4000))
+                     .values(score=88, room_avg_mmr=4000,
+                             own_mmr_before=3900, mmr_delta=100))
         conn.execute(update(races)
                      .where((races.c.session_id == session_id) & (races.c.race_num == 1))
                      .values(track_id=track_id, placement=4))
@@ -239,10 +271,15 @@ def test_analytics_page_has_sorting_explanations_and_score_chart(client, engine,
     assert "How to read the session model" in body
     assert "Adj R²" in body
     assert 'id="score-chart"' in body
+    assert 'id="mmr-chart"' in body
+    assert 'aria-label="Score summary"' in body
+    assert "Median" in body
+    assert "Scored sessions" in body
     assert 'data-score-mode="weighted"' in body
     assert 'src="/static/analytics.js"' in body
     payload = client.get("/api/analytics").json()
     assert payload["score"]["points"][0]["score"] == 88
+    assert payload["score"]["summary"]["median"] == 88
 
 
 def test_healthz(client):

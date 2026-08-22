@@ -222,3 +222,19 @@ def test_score_trend_has_raw_and_room_weighted_values(conn):
     assert trend["points"][0]["room_weighted_score"] == pytest.approx(100 * 3000 / 3500)
     assert trend["points"][1]["room_weighted_score"] == pytest.approx(80 * 4000 / 3500)
     assert trend["points"][2]["room_weighted_score"] is None
+    assert trend["summary"] == {
+        "scored_sessions": 3,
+        "median": pytest.approx(90),
+        "mean": pytest.approx(90),
+        "best": pytest.approx(100),
+        "worst": pytest.approx(80),
+        "sd": pytest.approx(10),
+    }
+
+
+def test_score_summary_is_well_formed_without_scores(conn):
+    summary = analytics.score_trend(analytics.load_frame(conn))["summary"]
+    assert summary == {
+        "scored_sessions": 0, "median": None, "mean": None,
+        "best": None, "worst": None, "sd": None,
+    }

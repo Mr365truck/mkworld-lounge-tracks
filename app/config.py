@@ -1,6 +1,6 @@
 """Runtime configuration, all from environment variables (spec section 8)."""
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -45,6 +45,11 @@ def to_utc(dt: datetime) -> datetime:
     if dt.tzinfo is None:
         dt = dt.replace(tzinfo=local_tz())
     return dt.astimezone(timezone.utc).replace(tzinfo=None)
+
+
+def round_to_hour(dt: datetime) -> datetime:
+    """Round a wall-clock datetime to its nearest whole hour (halves round up)."""
+    return (dt + timedelta(minutes=30)).replace(minute=0, second=0, microsecond=0)
 
 
 def utcnow() -> datetime:

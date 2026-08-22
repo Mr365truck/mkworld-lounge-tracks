@@ -34,6 +34,33 @@
   </div>
   {% if a.score.points %}
   <div class="p-3">
+    {% set s = a.score.summary %}
+    <div class="mb-4 grid grid-cols-2 gap-2 sm:grid-cols-3" aria-label="Score summary">
+      <div class="rounded-md bg-ink-900 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-ink-500">Median</p>
+        <p class="mt-0.5 text-lg font-medium tabular-nums text-ink-100">{{ s.median | num(1) }}</p>
+      </div>
+      <div class="rounded-md bg-ink-900 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-ink-500">Average</p>
+        <p class="mt-0.5 text-lg font-medium tabular-nums text-ink-100">{{ s.mean | num(1) }}</p>
+      </div>
+      <div class="rounded-md bg-ink-900 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-ink-500">Best</p>
+        <p class="mt-0.5 text-lg font-medium tabular-nums text-good-400">{{ s.best | num(0) }}</p>
+      </div>
+      <div class="rounded-md bg-ink-900 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-ink-500">Worst</p>
+        <p class="mt-0.5 text-lg font-medium tabular-nums text-bad-400">{{ s.worst | num(0) }}</p>
+      </div>
+      <div class="rounded-md bg-ink-900 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-ink-500">Score SD</p>
+        <p class="mt-0.5 text-lg font-medium tabular-nums text-ink-100">{{ s.sd | num(1) }}</p>
+      </div>
+      <div class="rounded-md bg-ink-900 px-3 py-2">
+        <p class="text-[11px] uppercase tracking-wide text-ink-500">Scored sessions</p>
+        <p class="mt-0.5 text-lg font-medium tabular-nums text-ink-100">{{ s.scored_sessions }}</p>
+      </div>
+    </div>
     <div id="score-chart-data" class="hidden">
       {% for p in a.score.points %}
       <span data-session-id="{{ p.session_id }}"
@@ -342,7 +369,25 @@
 
 {% if a.mmr %}
 <section class="card mt-5 overflow-hidden">
-  <div class="border-b border-ink-800 px-3 py-2.5"><h2 class="font-medium">MMR over time</h2></div>
+  <div class="border-b border-ink-800 px-3 py-2.5">
+    <h2 class="font-medium">MMR over time</h2>
+    <p class="text-xs text-ink-500">Your MMR after each session. Select a point to inspect it.</p>
+  </div>
+  <div class="p-3">
+    <div id="mmr-chart-data" class="hidden">
+      {% for m in a.mmr %}
+      <span data-session-id="{{ m.session_id }}"
+            data-label="{{ m.played_at | dt }}"
+            data-mmr="{{ m.after if m.after is not none else (m.before if m.before is not none else '') }}"
+            data-delta="{{ m.delta if m.delta is not none else '' }}"></span>
+      {% endfor %}
+    </div>
+    <canvas id="mmr-chart" class="block w-full" style="height: 300px"
+            role="img" aria-label="MMR over time"></canvas>
+    <p id="mmr-chart-readout" class="mt-2 text-center text-xs text-ink-400" aria-live="polite"></p>
+  </div>
+  <details class="border-t border-ink-800">
+    <summary class="cursor-pointer px-3 py-2 text-xs text-ink-400">Session MMR history</summary>
   <table class="w-full text-sm">
     <tbody>
       {% for m in a.mmr %}
@@ -357,6 +402,7 @@
       {% endfor %}
     </tbody>
   </table>
+  </details>
 </section>
 {% endif %}
 {% endblock %}

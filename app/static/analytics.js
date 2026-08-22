@@ -168,6 +168,9 @@
         context.arc(x, y, selected ? 5 : 3.5, 0, Math.PI * 2);
         context.fill();
       });
+      if (!points[selectedIndex] || !Number.isFinite(points[selectedIndex].value)) {
+        selectedIndex = geometry[geometry.length - 1].index;
+      }
 
       const labelIndexes = points.length <= 6
         ? points.map((_, index) => index)
@@ -222,6 +225,106 @@
     draw();
   }
 
+  function initMmrChart() {
+    const canvas = document.getElementById("mmr-chart");
+    const source = document.getElementById("mmr-chart-data");
+    const readout = document.getElementById("mmr-chart-readout");
+    if (!canvas || !source || !readout) return;
+
+    const points = Array.from(source.children).map((element) => ({
+      sessionId: Number(element.dataset.sessionId),
+      label: element.dataset.label,
+      value: element.dataset.mmr === "" ? null : Number(element.dataset.mmr),
+      delta: element.dataset.delta === "" ? null : Number(element.dataset.delta),
+    }));
+    const context = canvas.getContext("2d");
+    let selectedIndex = points.length - 1;
+    let geometry = [];
+
+    function updateReadout(point) {
+      readout.replaceChildren();
+      if (!point || point.value === null) return;
+      readout.append(`${point.label}: ${point.value.toLocaleString()} MMR`);
+      if (point.delta !== null) readout.append(` · ${point.delta >= 0 ? "+" : ""}${point.delta}`);
+      readout.append(" · ");
+      const link = document.createElement("a");
+      link.href = `/sessions/${point.sessionId}`;
+      link.className = "text-accent-400 underline underline-offset-2";
+      link.textContent = "Open session";
+      readout.append(link);
+    }
+
+    function draw() {
+      const width = Math.max(320, canvas.getBoundingClientRect().width);
+      const height = 300;
+      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.round(width * ratio);
+      canvas.height = Math.round(height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.clearRect(0, 0, width, height);
+      const margin = { top: 18, right: 18, bottom: 42, left: 58 };
+      const plotWidth = width - margin.left - margin.right;
+      const plotHeight = height - margin.top - margin.bottom;
+      const values = points.map((point) => point.value).filter(Number.isFinite);
+      geometry = [];
+      if (!values.length) return;
+      let minimum = Math.floor(Math.min(...values) / 100) * 100;
+      let maximum = Math.ceil(Math.max(...values) / 100) * 100;
+      if (minimum === maximum) { minimum -= 100; maximum += 100; }
+      const xAt = (index) => points.length === 1 ? margin.left + plotWidth / 2
+        : margin.left + index * plotWidth / (points.length - 1);
+      const yAt = (value) => margin.top + (maximum - value) / (maximum - minimum) * plotHeight;
+
+      context.font = "11px system-ui, sans-serif";
+      context.textAlign = "right";
+      context.textBaseline = "middle";
+      for (let step = 0; step <= 4; step += 1) {
+        const value = minimum + (maximum - minimum) * step / 4;
+        const y = yAt(value);
+        context.strokeStyle = "#1f262e";
+        context.lineWidth = 1;
+        context.beginPath(); context.moveTo(margin.left, y); context.lineTo(width - margin.right, y); context.stroke();
+        context.fillStyle = "#55616f";
+        context.fillText(Math.round(value).toLocaleString(), margin.left - 8, y);
+      }
+      context.strokeStyle = "#34d399";
+      context.lineWidth = 2;
+      context.beginPath();
+      let open = false;
+      points.forEach((point, index) => {
+        if (!Number.isFinite(point.value)) { open = false; return; }
+        const x = xAt(index); const y = yAt(point.value);
+        if (open) context.lineTo(x, y); else context.moveTo(x, y);
+        open = true; geometry.push({ point, index, x, y });
+      });
+      context.stroke();
+      geometry.forEach(({ index, x, y }) => {
+        context.beginPath();
+        context.fillStyle = index === selectedIndex ? "#e3e8ee" : "#34d399";
+        context.arc(x, y, index === selectedIndex ? 5 : 3.5, 0, Math.PI * 2);
+        context.fill();
+      });
+      const labels = points.length <= 6 ? points.map((_, index) => index)
+        : [0, Math.floor((points.length - 1) / 2), points.length - 1];
+      context.fillStyle = "#55616f"; context.textAlign = "center"; context.textBaseline = "top";
+      labels.forEach((index) => context.fillText(points[index].label.split(",")[0], xAt(index), height - margin.bottom + 12));
+      updateReadout(points[selectedIndex]);
+      canvas.setAttribute("aria-label", `MMR over time, ${geometry.length} points`);
+    }
+    function selectNearest(clientX) {
+      if (!geometry.length) return;
+      const x = clientX - canvas.getBoundingClientRect().left;
+      const nearest = geometry.reduce((best, item) => Math.abs(item.x - x) < Math.abs(best.x - x) ? item : best);
+      selectedIndex = nearest.index; draw();
+    }
+    canvas.addEventListener("pointermove", (event) => selectNearest(event.clientX));
+    canvas.addEventListener("pointerdown", (event) => selectNearest(event.clientX));
+    if (window.ResizeObserver) new ResizeObserver(draw).observe(canvas);
+    else window.addEventListener("resize", draw);
+    draw();
+  }
+
   initTrackSorting();
   initScoreChart();
+  initMmrChart();
 })();

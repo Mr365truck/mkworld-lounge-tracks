@@ -97,6 +97,17 @@
     nextStart.title = '';
   }
 
+  function roundDateTimeToHour(el) {
+    if (el.dataset.sfield !== 'played_at' || !el.value) return;
+    const entered = new Date(el.value);
+    if (Number.isNaN(entered.getTime())) return;
+    entered.setMinutes(entered.getMinutes() + 30, 0, 0);
+    entered.setMinutes(0, 0, 0);
+    const pad = (n) => String(n).padStart(2, '0');
+    el.value = `${entered.getFullYear()}-${pad(entered.getMonth() + 1)}-${pad(entered.getDate())}`
+      + `T${pad(entered.getHours())}:00`;
+  }
+
   /* ------------------------------------------------------------ field saves */
   async function saveRaceField(el, value) {
     const row = el.closest('.race-row');
@@ -186,6 +197,7 @@
     if (el === mmrAfter) {
       deriveMmrDelta();
     } else if (el.dataset.sfield) {
+      roundDateTimeToHour(el);
       const v = el.type === 'checkbox' ? el.checked : el.value;
       saveSessionField(el, v);
       if (el === mmrBefore || el === mmrDelta) fillMmrAfter();

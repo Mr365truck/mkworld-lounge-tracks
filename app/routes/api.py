@@ -102,7 +102,7 @@ def save_session_field(session_id: int, payload: dict = Body(...)):
             value = (value or "").strip() or None
         elif field == "played_at":
             try:
-                value = config.to_utc(datetime.fromisoformat(value))
+                value = config.to_utc(config.round_to_hour(datetime.fromisoformat(value)))
             except (TypeError, ValueError):
                 raise HTTPException(400, "played_at must be an ISO datetime")
         else:
