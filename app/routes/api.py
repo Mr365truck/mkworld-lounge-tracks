@@ -9,11 +9,12 @@ import math
 from fastapi import APIRouter, Body, HTTPException, Request
 from sqlalchemy import delete, insert, select, update
 
-from .. import analytics, backup, config, db, queries
+from .. import analytics, backup, config, db, do_not_mogi, lounge, queries
 from ..importer import import_text
 from ..matching import load_candidates, search
 from ..schema import (FORMATS, SHORTCUT_STATES, VARIANTS, import_issues, races,
-                      sessions, shock_events, track_aliases, tracks)
+                      sessions, shock_events, track_aliases, tracks,
+                      do_not_mogi_players)
 from ..shocks import MINIMAP_BY_CODE
 
 router = APIRouter(prefix="/api")
@@ -289,6 +290,61 @@ def update_track(track_id: int, payload: dict = Body(...)):
         conn.execute(update(tracks).where(tracks.c.id == track_id)
                      .values(**values, updated_at=config.utcnow()))
     return {"ok": True, "updated": values}
+
+
+# ----------------------------------------------------------- do-not-mogi list
+
+@router.get("/do-not-mogi/search")
+def do_not_mogi_search(q: str = "", limit: int = 8):
+    try:
+        result = lounge.search_players(q, limit=limit)
+    except lounge.LoungeError as exc:
+        raise HTTPException(502, str(exc))
+    with db.read() as conn:
+        listed_ids = set(conn.execute(
+            select(do_not_mogi_players.c.lounge_player_id)
+        ).scalars())
+    for player in result["results"]:
+        player["listed"] = player["lounge_player_id"] in listed_ids
+    return result
+
+
+@router.get("/do-not-mogi")
+def do_not_mogi_list():
+    with db.read() as conn:
+        return {"players": do_not_mogi.list_players(conn)}
+
+
+@router.post("/do-not-mogi", status_code=201)
+def add_do_not_mogi_player(payload: dict = Body(...)):
+    try:
+        player_id = int(payload.get("lounge_player_id"))
+    except (TypeError, ValueError):
+        raise HTTPException(400, "lounge_player_id is required")
+    try:
+        player, already = do_not_mogi.add_player(player_id)
+    except lounge.LoungeError as exc:
+        raise HTTPException(502, str(exc))
+    return {"ok": True, "already": already, "player": player}
+
+
+@router.delete("/do-not-mogi/{lounge_player_id}")
+def delete_do_not_mogi_player(lounge_player_id: int):
+    with db.connect() as conn:
+        result = conn.execute(delete(do_not_mogi_players).where(
+            do_not_mogi_players.c.lounge_player_id == lounge_player_id
+        ))
+    if result.rowcount == 0:
+        raise HTTPException(404, "player is not on the Do Not Mogi list")
+    return {"ok": True}
+
+
+@router.post("/do-not-mogi/refresh")
+def refresh_do_not_mogi_players():
+    result = do_not_mogi.refresh_names(force=True)
+    if result["failed"] and result["refreshed"] == 0:
+        raise HTTPException(502, "Lounge names could not be refreshed")
+    return {"ok": True, **result}
 
 
 # ---------------------------------------------------------------- shock locations

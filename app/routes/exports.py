@@ -13,7 +13,8 @@ from fastapi.responses import Response
 from sqlalchemy import select
 
 from .. import db
-from ..schema import import_issues, races, sessions, shock_events, track_aliases, tracks
+from ..schema import (do_not_mogi_players, import_issues, races, sessions,
+                      shock_events, track_aliases, tracks)
 
 router = APIRouter(prefix="/export")
 
@@ -112,6 +113,7 @@ def db_json():
         for name, table in (("tracks", tracks), ("track_aliases", track_aliases),
                             ("sessions", sessions), ("races", races),
                             ("shock_events", shock_events),
+                            ("do_not_mogi_players", do_not_mogi_players),
                             ("import_issues", import_issues)):
             payload[name] = [
                 {key: _jsonable(value) for key, value in dict(row).items()}

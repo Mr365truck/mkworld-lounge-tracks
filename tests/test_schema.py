@@ -6,8 +6,8 @@ import pytest
 from sqlalchemy import insert, select, text
 
 from app import config
-from app.schema import (default_expected_races, races, sessions, shock_events,
-                        track_aliases, tracks)
+from app.schema import (default_expected_races, do_not_mogi_players, races,
+                        sessions, shock_events, track_aliases, tracks)
 from app.seed import seed_tracks
 from app.seed_data import TRACKS
 from app.shocks import MINIMAPS
@@ -125,6 +125,17 @@ def test_shock_coordinates_and_lap_are_constrained(conn):
     track_id = conn.execute(select(tracks.c.id).where(tracks.c.code == "MBC")).scalar_one()
     conn.execute(insert(shock_events).values(track_id=track_id, x=0.2, y=0.8, lap=3))
     assert conn.execute(select(shock_events.c.lap)).scalar_one() == 3
+
+
+def test_do_not_mogi_uses_a_unique_lounge_player_id(conn):
+    from sqlalchemy import insert
+    conn.execute(insert(do_not_mogi_players).values(
+        lounge_player_id=42, name="First",
+    ))
+    with pytest.raises(Exception):
+        conn.execute(insert(do_not_mogi_players).values(
+            lounge_player_id=42, name="Duplicate",
+        ))
 
 
 # ------------------------------------------------------------------- migrations

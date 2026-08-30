@@ -21,6 +21,17 @@ BACKUP_KEEP = int(os.environ.get("BACKUP_KEEP", "30"))
 BACKUP_HOUR = int(os.environ.get("BACKUP_HOUR", "4"))
 BACKUP_ENABLED = os.environ.get("BACKUP_ENABLED", "1") not in ("0", "false", "False")
 
+# MKCentral's public Lounge API defaults to the current season when `season` is
+# omitted, so season changes do not require a deployment or config edit.
+LOUNGE_BASE_URL = os.environ.get("LOUNGE_BASE_URL", "https://lounge.mkcentral.com")
+LOUNGE_GAME = os.environ.get("LOUNGE_GAME", "mkworld12p")
+LOUNGE_HTTP_TIMEOUT = float(os.environ.get("LOUNGE_HTTP_TIMEOUT", "10"))
+LOUNGE_NAME_REFRESH_DAYS = max(1, int(os.environ.get("LOUNGE_NAME_REFRESH_DAYS", "7")))
+LOUNGE_REFRESH_HOUR = int(os.environ.get("LOUNGE_REFRESH_HOUR", "5"))
+LOUNGE_REFRESH_ENABLED = os.environ.get("LOUNGE_REFRESH_ENABLED", "1") not in (
+    "0", "false", "False",
+)
+
 
 def local_tz() -> ZoneInfo:
     try:

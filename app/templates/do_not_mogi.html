@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% block title %}Do Not Mogi — mogi-tracker{% endblock %}
+
+{% block headeractions %}
+  <button id="refresh-names" class="btn h-8 px-3 text-xs" type="button">Refresh names</button>
+{% endblock %}
+
+{% block content %}
+<div class="mb-5">
+  <h1 class="text-xl font-semibold tracking-tight">Do Not Mogi</h1>
+  <p class="mt-1 max-w-2xl text-sm text-ink-500">
+    Your permanent no-play list. Players are tied to their Lounge ID, and their current
+    Lounge names are checked about every {{ refresh_days }} days.
+  </p>
+</div>
+
+<section class="card mb-5 p-3 sm:p-4">
+  <label for="player-search" class="lbl">Add from the Lounge leaderboard</label>
+  <div class="relative max-w-2xl">
+    <input id="player-search" class="field w-full pr-9" type="search"
+           data-game-label="{{ lounge_game_label }}"
+           placeholder="Search a Lounge name…" autocomplete="off"
+           aria-autocomplete="list" aria-controls="player-results" aria-expanded="false">
+    <span id="search-spinner" class="pointer-events-none absolute right-3 top-2 text-sm text-ink-600"></span>
+    <div id="player-results" class="absolute left-0 top-full z-40 mt-1 hidden w-full overflow-hidden rounded-lg border border-ink-700 bg-ink-900 shadow-xl shadow-black/50"
+         role="listbox"></div>
+  </div>
+  <p id="search-status" class="mt-2 min-h-4 text-xs text-ink-600">
+    Searches the current {{ lounge_game_label }} Lounge leaderboard.
+  </p>
+</section>
+
+<section class="card overflow-hidden">
+  <div class="flex items-center gap-3 border-b border-ink-800 px-3 py-2.5">
+    <h2 class="font-medium">Never play with</h2>
+    <span id="list-count" class="ml-auto text-xs {{ 'text-bad-400' if players else 'text-ink-600' }}">
+      {{ players|length }} {{ 'player' if players|length == 1 else 'players' }}
+    </span>
+  </div>
+  {% if players %}
+  <div class="overflow-x-auto">
+    <table class="w-full min-w-[620px] text-sm">
+      <thead>
+        <tr class="border-b border-ink-800 text-left text-[11px] uppercase tracking-wide text-ink-500">
+          <th class="w-20 px-3 py-2 font-medium">Country</th>
+          <th class="px-3 py-2 font-medium">Lounge name</th>
+          <th class="w-44 px-3 py-2 font-medium">Name checked</th>
+          <th class="w-24 px-3 py-2"></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for player in players %}
+        <tr class="border-b border-ink-900 last:border-0 hover:bg-ink-900/50"
+            data-player-id="{{ player.lounge_player_id }}" data-player-name="{{ player.name }}">
+          <td class="px-3 py-2">
+            {% if player.country_code %}<span class="chip-muted font-mono">{{ player.country_code }}</span>{% else %}<span class="text-ink-700">—</span>{% endif %}
+          </td>
+          <td class="px-3 py-2 font-medium text-ink-100">
+            <a class="hover:text-accent-300 hover:underline" target="_blank" rel="noreferrer"
+               href="{{ lounge_profile_url(player.lounge_player_id) }}">{{ player.name }}</a>
+          </td>
+          <td class="px-3 py-2 text-xs text-ink-500">{{ player.last_refreshed_at|dt('%b %-d, %Y') }}</td>
+          <td class="px-3 py-2 text-right">
+            <button class="remove-player btn-ghost h-7 px-2 text-xs hover:text-bad-300" type="button">Remove</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="px-3 py-10 text-center">
+    <p class="text-sm text-ink-400">Nobody is on the list yet.</p>
+    <p class="mt-1 text-xs text-ink-600">Search the Lounge leaderboard above to add someone.</p>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}
+
+{% block scripts %}<script src="/static/do_not_mogi.js" defer></script>{% endblock %}

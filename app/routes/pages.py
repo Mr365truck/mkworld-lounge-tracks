@@ -1,4 +1,4 @@
-"""HTML screens — spec section 4. Four of them, plus the import view."""
+"""Server-rendered HTML screens."""
 from collections import defaultdict
 from datetime import datetime
 
@@ -6,7 +6,7 @@ from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import func, select
 
-from .. import analytics, config, db, queries
+from .. import analytics, config, db, do_not_mogi, lounge, queries
 from ..schema import (FORMATS, default_expected_races, import_issues, races,
                       sessions, shock_events, tracks)
 from ..shocks import MINIMAPS
@@ -126,6 +126,19 @@ def shocks_page(request: Request):
         })
     return templates.TemplateResponse(request, "shocks.html", {
         "tracks": shock_tracks, "shock_payload": payload, "nav": "shocks",
+    })
+
+
+@router.get("/do-not-mogi")
+def do_not_mogi_page(request: Request):
+    with db.read() as conn:
+        players = do_not_mogi.list_players(conn)
+    return templates.TemplateResponse(request, "do_not_mogi.html", {
+        "players": players,
+        "refresh_days": config.LOUNGE_NAME_REFRESH_DAYS,
+        "lounge_game_label": lounge.game_label(),
+        "lounge_profile_url": lounge.profile_url,
+        "nav": "do_not_mogi",
     })
 
 

@@ -4,6 +4,7 @@
 @source "../entry.js";
 @source "../analytics.js";
 @source "../shocks.js";
+@source "../do_not_mogi.js";
 
 /* Dark by default: this gets used in the evening, mid-lounge, next to a game. */
 @theme {

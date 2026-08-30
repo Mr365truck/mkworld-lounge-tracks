@@ -1,7 +1,7 @@
-"""SQLAlchemy Core table definitions — spec section 3.
+"""SQLAlchemy Core table definitions — spec section 3 plus additive features.
 
-Core, not ORM: four tables, no lazy loading, and `pandas.read_sql` reads straight
-off the connection for section 6.
+Core, not ORM: no lazy loading, and `pandas.read_sql` reads straight off the
+connection for section 6.
 """
 from sqlalchemy import (
     Boolean, CheckConstraint, Column, DateTime, Float, ForeignKey, Integer,
@@ -138,6 +138,21 @@ import_issues = Table(
     Column("detail", Text),
     Column("resolved", Boolean, nullable=False, server_default="0"),
     Column("created_at", DateTime, nullable=False, server_default=func.current_timestamp()),
+)
+
+# A personal blocklist keyed by MKCentral Lounge's stable player ID. Names are a
+# cache, not identity: Lounge renames are picked up by the scheduled refresh.
+do_not_mogi_players = Table(
+    "do_not_mogi_players", metadata,
+    Column("id", Integer, primary_key=True),
+    Column("lounge_player_id", Integer, nullable=False, unique=True),
+    Column("name", String, nullable=False),
+    Column("country_code", String),
+    Column("added_at", DateTime, nullable=False, server_default=func.current_timestamp()),
+    Column("last_refreshed_at", DateTime, nullable=False,
+           server_default=func.current_timestamp()),
+    Column("updated_at", DateTime, nullable=False, server_default=func.current_timestamp()),
+    CheckConstraint("lounge_player_id > 0", name="ck_do_not_mogi_player_id"),
 )
 
 

@@ -22,7 +22,7 @@ Then open <http://localhost:8000>. The schema migrates and the 30-course track t
 seeds themselves on first start — there is nothing to run by hand.
 
 ```sh
-.venv/bin/pytest -q            # 109 tests
+.venv/bin/pytest -q            # run the full suite
 tools/build_css.sh             # only after editing templates or input.css
 ```
 
@@ -70,8 +70,14 @@ No SSH required.
 | `BACKUP_DIR` | `/data/backups` | nightly `VACUUM INTO` target |
 | `BACKUP_KEEP` | `30` | backups retained |
 | `BACKUP_HOUR` | `4` | hour of day, in `TZ` |
-| `BACKUP_ENABLED` | `1` | set `0` to turn the scheduler off |
+| `BACKUP_ENABLED` | `1` | set `0` to disable database backups |
 | `IMPORT_DEFAULT_YEAR` | `2026` | year for the importer's bare `5/26`-style dates |
+| `LOUNGE_GAME` | `mkworld12p` | MKCentral leaderboard used for player search |
+| `LOUNGE_BASE_URL` | `https://lounge.mkcentral.com` | MKCentral Lounge service root |
+| `LOUNGE_HTTP_TIMEOUT` | `10` | seconds before a Lounge request fails |
+| `LOUNGE_NAME_REFRESH_DAYS` | `7` | minimum age before a saved Lounge name is checked again |
+| `LOUNGE_REFRESH_HOUR` | `5` | local hour for the daily stale-name check |
+| `LOUNGE_REFRESH_ENABLED` | `1` | set `0` to disable automatic Lounge name refreshes |
 
 ### Backups
 
@@ -105,6 +111,17 @@ Shock data lives in its own `shock_events` table and is included in the full JSO
 database export. Updating the container runs the additive Alembic migration without
 replacing the existing session or race tables.
 
+## Do Not Mogi
+
+The **Do Not Mogi** tab is a personal list of Lounge players to avoid. Its search is
+backed by MKCentral's current MKWorld 12P leaderboard. Entries are stored by stable
+Lounge player ID rather than display name, and a scheduled stale-name check refreshes
+each entry about once a week. A manual **Refresh names** action is also available.
+
+Only the fields needed for identity are saved: Lounge player ID, display name, and
+country. Leaderboard rank and MMR are shown only while searching. The upstream player
+response also contains account fields that this app deliberately discards.
+
 ## No auth
 
 Single user on a trusted LAN, which means anything on that network can read and write
@@ -126,7 +143,7 @@ app/
 alembic/         versioned migrations
 tools/           PDF extraction, CSS build
 data/            recovered history + regeneration instructions
-tests/           109 tests; importer fixtures are real Lounge.pdf excerpts
+tests/           route, schema, safety, analytics, and real importer fixtures
 ```
 
 ## Still open

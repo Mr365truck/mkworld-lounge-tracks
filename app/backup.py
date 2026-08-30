@@ -1,4 +1,4 @@
-"""Nightly backup — spec section 8.
+"""Scheduled maintenance: nightly backups and Lounge-name refresh checks.
 
 `VACUUM INTO` a timestamped file in /data/backups, keep the newest 30. ZFS snapshots
 on the dataset are the real backup; this is the belt to that pair of braces, because a
@@ -44,18 +44,34 @@ def run_backup(keep: int | None = None) -> str | None:
 
 
 def start_scheduler() -> BackgroundScheduler | None:
-    if not config.BACKUP_ENABLED:
-        log.info("backups disabled (BACKUP_ENABLED=0)")
+    if not config.BACKUP_ENABLED and not config.LOUNGE_REFRESH_ENABLED:
+        log.info("scheduled maintenance disabled")
         return None
     sched = BackgroundScheduler(timezone=str(config.local_tz()))
-    sched.add_job(
-        run_backup,
-        CronTrigger(hour=config.BACKUP_HOUR, minute=0),
-        id="nightly-vacuum-into",
-        replace_existing=True,
-        misfire_grace_time=3600,
-    )
+    if config.BACKUP_ENABLED:
+        sched.add_job(
+            run_backup,
+            CronTrigger(hour=config.BACKUP_HOUR, minute=0),
+            id="nightly-vacuum-into",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+        log.info("nightly backup scheduled for %02d:00 %s",
+                 config.BACKUP_HOUR, config.TZ_NAME)
+    else:
+        log.info("backups disabled (BACKUP_ENABLED=0)")
+    if config.LOUNGE_REFRESH_ENABLED:
+        # This check runs daily, but each row is fetched only once it is a week old.
+        # Persisting last_refreshed_at means container restarts cannot reset the clock.
+        from .do_not_mogi import refresh_names
+        sched.add_job(
+            refresh_names,
+            CronTrigger(hour=config.LOUNGE_REFRESH_HOUR, minute=15),
+            id="do-not-mogi-name-refresh",
+            replace_existing=True,
+            misfire_grace_time=3600,
+        )
+        log.info("Lounge name refresh check scheduled for %02d:15 %s",
+                 config.LOUNGE_REFRESH_HOUR, config.TZ_NAME)
     sched.start()
-    log.info("nightly backup scheduled for %02d:00 %s",
-             config.BACKUP_HOUR, config.TZ_NAME)
     return sched
