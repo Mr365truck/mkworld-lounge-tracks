@@ -46,9 +46,13 @@ def session_stats(session, race_list) -> dict:
 def create_session(conn, fmt: str = "ffa", played_at: datetime | None = None,
                    expected_races: int | None = None) -> int:
     now = config.utcnow()
+    if played_at is None:
+        # Mogis begin on the hour in the configured display timezone. Round the
+        # default as local wall-clock time before converting it back for storage.
+        played_at = config.to_utc(config.round_to_hour(config.to_local(now)))
     expected = expected_races or default_expected_races(fmt)
     session_id = conn.execute(insert(sessions).values(
-        played_at=played_at or now, format=fmt, expected_races=expected,
+        played_at=played_at, format=fmt, expected_races=expected,
         created_at=now, updated_at=now,
     )).inserted_primary_key[0]
     # Render all expected rows at once — no wizard, no per-race save button.

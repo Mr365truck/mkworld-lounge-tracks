@@ -5,6 +5,7 @@ import datetime as dt
 import pytest
 from sqlalchemy import select, update
 
+from app import config
 from app.queries import create_session, session_stats, session_row, race_rows
 from app.schema import races, sessions, shock_events, tracks
 
@@ -21,6 +22,21 @@ def test_new_session_renders_expected_rows(client):
     sid = int(r.headers["location"].rsplit("/", 1)[1])
     body = client.get(f"/sessions/{sid}").text
     assert body.count('class="race-row"') == 12
+
+
+def test_new_session_defaults_to_nearest_hour(client, engine, monkeypatch):
+    monkeypatch.setattr(
+        config, "utcnow", lambda: dt.datetime(2026, 8, 31, 23, 40, 27, 123456)
+    )
+
+    response = client.post("/sessions", follow_redirects=False)
+    session_id = int(response.headers["location"].rsplit("/", 1)[1])
+
+    with engine.begin() as conn:
+        played_at = conn.execute(
+            select(sessions.c.played_at).where(sessions.c.id == session_id)
+        ).scalar_one()
+    assert played_at == dt.datetime(2026, 9, 1, 0, 0)
 
 
 def test_session_renders_derived_mmr_after(client, session_id):
