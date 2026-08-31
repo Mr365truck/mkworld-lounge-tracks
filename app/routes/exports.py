@@ -13,8 +13,8 @@ from fastapi.responses import Response
 from sqlalchemy import select
 
 from .. import db
-from ..schema import (do_not_mogi_players, import_issues, races, sessions,
-                      shock_events, track_aliases, tracks)
+from ..schema import (do_not_mogi_players, import_issues, lounge_mmr_cache,
+                      races, sessions, shock_events, track_aliases, tracks)
 
 router = APIRouter(prefix="/export")
 
@@ -23,7 +23,7 @@ CSV_COLUMNS = [
     "session_id", "played_at", "format", "expected_races", "aborted",
     "room_min_mmr", "room_max_mmr", "room_avg_mmr", "seat", "mate_mmr",
     "own_mmr_before", "mmr_delta", "score", "session_notes",
-    "session_created_at", "session_updated_at",
+    "session_mmr_updated_at", "session_created_at", "session_updated_at",
     # Stored race data.
     "race_id", "race_num", "track_id", "variant", "placement",
     "start_position", "lap1_position", "shortcut_hit", "mate_placement",
@@ -51,6 +51,7 @@ def races_csv():
             sessions.c.mmr_delta,
             sessions.c.score,
             sessions.c.notes.label("session_notes"),
+            sessions.c.mmr_updated_at.label("session_mmr_updated_at"),
             sessions.c.created_at.label("session_created_at"),
             sessions.c.updated_at.label("session_updated_at"),
             races.c.id.label("race_id"),
@@ -114,6 +115,7 @@ def db_json():
                             ("sessions", sessions), ("races", races),
                             ("shock_events", shock_events),
                             ("do_not_mogi_players", do_not_mogi_players),
+                            ("lounge_mmr_cache", lounge_mmr_cache),
                             ("import_issues", import_issues)):
             payload[name] = [
                 {key: _jsonable(value) for key, value in dict(row).items()}

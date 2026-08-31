@@ -381,7 +381,7 @@ def test_csv_export_contains_raw_session_and_race_data_without_stats(
 def test_json_export_covers_every_table(client, session_id):
     payload = client.get("/export/db.json").json()
     for table in ("tracks", "track_aliases", "sessions", "races", "shock_events",
-                  "do_not_mogi_players", "import_issues"):
+                  "do_not_mogi_players", "lounge_mmr_cache", "import_issues"):
         assert table in payload
     assert len(payload["tracks"]) == 30
 
@@ -395,7 +395,7 @@ def test_json_export_rows_match_raw_table_columns(client, engine, session_id):
 
     assert set(payload) == {
         "tracks", "track_aliases", "sessions", "races", "shock_events",
-        "do_not_mogi_players", "import_issues",
+        "do_not_mogi_players", "lounge_mmr_cache", "import_issues",
     }
     assert set(payload["sessions"][0]) == set(sessions.c.keys())
     assert set(payload["races"][0]) == set(races.c.keys())

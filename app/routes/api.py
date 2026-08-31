@@ -109,8 +109,12 @@ def save_session_field(session_id: int, payload: dict = Body(...)):
         else:
             raise HTTPException(400, f"unknown field {field!r}")
 
+        now = config.utcnow()
+        values = {field: value, "updated_at": now}
+        if field in ("own_mmr_before", "mmr_delta"):
+            values["mmr_updated_at"] = now
         conn.execute(update(sessions).where(sessions.c.id == session_id)
-                     .values(**{field: value}, updated_at=config.utcnow()))
+                     .values(**values))
 
         if field == "expected_races":
             queries.sync_race_rows(conn, session_id, value)

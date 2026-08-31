@@ -29,6 +29,8 @@ services:
       BACKUP_DIR: /data/backups
       BACKUP_KEEP: "30"
       BACKUP_HOUR: "4"                 # nightly VACUUM INTO, in TZ above
+      LOUNGE_PLAYER_ID: "67656"         # Mr365truck; stable MKCentral player ID
+      LOUNGE_MMR_REFRESH_HOURS: "24"
       PORT: "8000"
     volumes:
       - /mnt/minecraft/mogi-tracker:/data

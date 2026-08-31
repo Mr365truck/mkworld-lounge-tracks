@@ -130,3 +130,17 @@ def get_player(lounge_player_id: int) -> dict:
     if player["lounge_player_id"] != lounge_player_id:
         raise LoungeError("Lounge returned the wrong player")
     return player
+
+
+def get_leaderboard_player(lounge_player_id: int) -> dict:
+    """Return a stable-ID-matched player from the current configured leaderboard."""
+    identity = get_player(lounge_player_id)
+    leaderboard = search_players(identity["name"], limit=20)
+    player = next(
+        (item for item in leaderboard["results"]
+         if item["lounge_player_id"] == identity["lounge_player_id"]),
+        None,
+    )
+    if player is None or player["mmr"] is None:
+        raise LoungeError("player is not on the current Lounge leaderboard")
+    return {**player, "season": leaderboard["season"]}

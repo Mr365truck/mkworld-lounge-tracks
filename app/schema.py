@@ -74,6 +74,9 @@ sessions = Table(
     Column("mate_mmr", Integer),
     Column("own_mmr_before", Integer),
     Column("mmr_delta", Integer),
+    # Only manual MMR edits set this. It lets a just-finished session temporarily
+    # supersede the slower MKCentral cache without treating unrelated edits as MMR.
+    Column("mmr_updated_at", DateTime),
     Column("score", Integer),
     Column("notes", Text),
     # created_at is deliberately distinct from played_at: section 6 needs when a
@@ -153,6 +156,21 @@ do_not_mogi_players = Table(
            server_default=func.current_timestamp()),
     Column("updated_at", DateTime, nullable=False, server_default=func.current_timestamp()),
     CheckConstraint("lounge_player_id > 0", name="ck_do_not_mogi_player_id"),
+)
+
+# Singleton cache for the configured user's current MKCentral leaderboard value.
+# Session MMR edits newer than refreshed_at temporarily take precedence.
+lounge_mmr_cache = Table(
+    "lounge_mmr_cache", metadata,
+    Column("id", Integer, primary_key=True),
+    Column("lounge_player_id", Integer, nullable=False),
+    Column("player_name", String, nullable=False),
+    Column("mmr", Integer, nullable=False),
+    Column("season", Integer, nullable=False),
+    Column("refreshed_at", DateTime, nullable=False),
+    CheckConstraint("id = 1", name="ck_lounge_mmr_cache_singleton"),
+    CheckConstraint("lounge_player_id > 0", name="ck_lounge_mmr_cache_player_id"),
+    CheckConstraint("mmr >= 0", name="ck_lounge_mmr_cache_mmr"),
 )
 
 

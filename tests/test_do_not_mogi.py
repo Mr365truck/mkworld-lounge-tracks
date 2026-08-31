@@ -3,7 +3,7 @@ import datetime as dt
 
 from sqlalchemy import select, update
 
-from app import backup, config, do_not_mogi, lounge
+from app import backup, config, current_mmr, do_not_mogi, lounge
 from app.schema import do_not_mogi_players
 
 
@@ -153,13 +153,36 @@ def test_name_refresh_identity_is_not_tied_to_a_season(monkeypatch):
     assert calls == [("/api/player/allgames", {"id": 26176})]
 
 
-def test_name_refresh_is_scheduled_even_when_backups_are_disabled(monkeypatch):
+def test_current_mmr_lookup_matches_the_stable_player_id(monkeypatch):
+    monkeypatch.setattr(lounge, "get_player", lambda player_id: player(player_id))
+    monkeypatch.setattr(lounge, "search_players", lambda query, limit=8: {
+        "query": query,
+        "season": 3,
+        "total": 2,
+        "results": [
+            {**player(99, "Similar"), "mmr": 9000, "rank": 1,
+             "events_played": 10},
+            {**player(), "mmr": 4236, "rank": 2632, "events_played": 54},
+        ],
+    })
+
+    result = lounge.get_leaderboard_player(26176)
+
+    assert result["lounge_player_id"] == 26176
+    assert result["mmr"] == 4236
+    assert result["season"] == 3
+
+
+def test_name_refresh_is_scheduled_even_when_backups_are_disabled(engine, monkeypatch):
     monkeypatch.setattr(config, "BACKUP_ENABLED", False)
     monkeypatch.setattr(config, "LOUNGE_REFRESH_ENABLED", True)
+    monkeypatch.setattr(current_mmr, "refresh", lambda: {"updated": False})
     scheduler = backup.start_scheduler()
     try:
         assert {job.id for job in scheduler.get_jobs()} == {
-            "do-not-mogi-name-refresh",
+            "current-lounge-mmr-refresh", "do-not-mogi-name-refresh",
         }
+        mmr_job = scheduler.get_job("current-lounge-mmr-refresh")
+        assert mmr_job.trigger.interval == dt.timedelta(hours=24)
     finally:
         scheduler.shutdown(wait=False)

@@ -6,7 +6,7 @@ from fastapi import APIRouter, Form, HTTPException, Request
 from fastapi.responses import RedirectResponse
 from sqlalchemy import func, select
 
-from .. import analytics, config, db, do_not_mogi, lounge, queries
+from .. import analytics, config, current_mmr, db, do_not_mogi, lounge, queries
 from ..schema import (FORMATS, default_expected_races, import_issues, races,
                       sessions, shock_events, tracks)
 from ..shocks import MINIMAPS
@@ -29,12 +29,7 @@ def home(request: Request):
             "placements": conn.execute(
                 select(func.count(races.c.placement))).scalar(),
         }
-        latest_mmr = next(
-            (r for r in rows if r["own_mmr_before"] is not None), None)
-        totals["current_mmr"] = (
-            latest_mmr["own_mmr_before"] + (latest_mmr["mmr_delta"] or 0)
-            if latest_mmr else None
-        )
+        totals["current_mmr"] = current_mmr.value(conn)
         recent_deltas = [
             r["mmr_delta"] for r in rows[:10] if r["mmr_delta"] is not None
         ]

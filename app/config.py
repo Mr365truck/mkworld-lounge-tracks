@@ -26,6 +26,10 @@ BACKUP_ENABLED = os.environ.get("BACKUP_ENABLED", "1") not in ("0", "false", "Fa
 LOUNGE_BASE_URL = os.environ.get("LOUNGE_BASE_URL", "https://lounge.mkcentral.com")
 LOUNGE_GAME = os.environ.get("LOUNGE_GAME", "mkworld12p")
 LOUNGE_HTTP_TIMEOUT = float(os.environ.get("LOUNGE_HTTP_TIMEOUT", "10"))
+LOUNGE_PLAYER_ID = int(os.environ.get("LOUNGE_PLAYER_ID", "67656"))
+LOUNGE_MMR_REFRESH_HOURS = max(
+    1, int(os.environ.get("LOUNGE_MMR_REFRESH_HOURS", "24"))
+)
 LOUNGE_NAME_REFRESH_DAYS = max(1, int(os.environ.get("LOUNGE_NAME_REFRESH_DAYS", "7")))
 LOUNGE_REFRESH_HOUR = int(os.environ.get("LOUNGE_REFRESH_HOUR", "5"))
 LOUNGE_REFRESH_ENABLED = os.environ.get("LOUNGE_REFRESH_ENABLED", "1") not in (

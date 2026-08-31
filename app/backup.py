@@ -1,4 +1,4 @@
-"""Scheduled maintenance: nightly backups and Lounge-name refresh checks.
+"""Scheduled maintenance: nightly backups and Lounge data refresh checks.
 
 `VACUUM INTO` a timestamped file in /data/backups, keep the newest 30. ZFS snapshots
 on the dataset are the real backup; this is the belt to that pair of braces, because a
@@ -14,6 +14,7 @@ from pathlib import Path
 
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
+from apscheduler.triggers.interval import IntervalTrigger
 
 from . import config, db
 
@@ -61,6 +62,18 @@ def start_scheduler() -> BackgroundScheduler | None:
     else:
         log.info("backups disabled (BACKUP_ENABLED=0)")
     if config.LOUNGE_REFRESH_ENABLED:
+        from .current_mmr import next_refresh_at, refresh as refresh_current_mmr
+        sched.add_job(
+            refresh_current_mmr,
+            IntervalTrigger(hours=config.LOUNGE_MMR_REFRESH_HOURS),
+            id="current-lounge-mmr-refresh",
+            replace_existing=True,
+            next_run_time=next_refresh_at(),
+            misfire_grace_time=3600,
+        )
+        log.info("current Lounge MMR refresh scheduled every %d hours",
+                 config.LOUNGE_MMR_REFRESH_HOURS)
+
         # This check runs daily, but each row is fetched only once it is a week old.
         # Persisting last_refreshed_at means container restarts cannot reset the clock.
         from .do_not_mogi import refresh_names

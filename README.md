@@ -75,9 +75,11 @@ No SSH required.
 | `LOUNGE_GAME` | `mkworld12p` | MKCentral leaderboard used for player search |
 | `LOUNGE_BASE_URL` | `https://lounge.mkcentral.com` | MKCentral Lounge service root |
 | `LOUNGE_HTTP_TIMEOUT` | `10` | seconds before a Lounge request fails |
+| `LOUNGE_PLAYER_ID` | `67656` | stable MKCentral player ID used for Current MMR |
+| `LOUNGE_MMR_REFRESH_HOURS` | `24` | hours between current-MMR leaderboard checks |
 | `LOUNGE_NAME_REFRESH_DAYS` | `7` | minimum age before a saved Lounge name is checked again |
 | `LOUNGE_REFRESH_HOUR` | `5` | local hour for the daily stale-name check |
-| `LOUNGE_REFRESH_ENABLED` | `1` | set `0` to disable automatic Lounge name refreshes |
+| `LOUNGE_REFRESH_ENABLED` | `1` | set `0` to disable automatic Lounge data refreshes |
 
 ### Backups
 
@@ -86,6 +88,11 @@ writes a checkpointed copy to `/data/backups` and keeps the newest 30. It runs
 **in-process** via APScheduler, not host cron — there is no SSH.
 
 ## Entry, briefly
+
+The landing page caches Current MMR from MKCentral every 24 hours. If a session's
+MMR fields are edited after that refresh, the manually entered post-session MMR is
+shown until the next successful MKCentral update. A failed request retains the last
+good cached value.
 
 The entry screen is the one that decides whether this gets used. Target: a full
 12-race session, keyboard only, no mouse.
