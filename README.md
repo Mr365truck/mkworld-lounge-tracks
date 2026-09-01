@@ -125,6 +125,10 @@ backed by MKCentral's current MKWorld 12P leaderboard. Entries are stored by sta
 Lounge player ID rather than display name, and a scheduled stale-name check refreshes
 each entry about once a week. A manual **Refresh names** action is also available.
 
+Paste a numbered Lounge queue into **Check the current queue** to locate the configured
+player's 12-person rank group. The checker shows a red warning when a saved player is
+in that room; headers, spacer lines, MMR commas, and trailing queue markers are ignored.
+
 Only the fields needed for identity are saved: Lounge player ID, display name, and
 country. Leaderboard rank and MMR are shown only while searching. The upstream player
 response also contains account fields that this app deliberately discards.

@@ -36,6 +36,14 @@ def value(conn) -> int | None:
     return cached["mmr"] if cached is not None else None
 
 
+def player_name(conn) -> str | None:
+    """Cached current Lounge name for the configured player."""
+    cached = _cache_row(conn)
+    if cached is None or cached["lounge_player_id"] != config.LOUNGE_PLAYER_ID:
+        return None
+    return cached["player_name"]
+
+
 def next_refresh_at():
     """Return an aware UTC time for the first refresh after a process starts."""
     now = config.utcnow()

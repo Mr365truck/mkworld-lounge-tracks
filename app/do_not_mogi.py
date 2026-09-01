@@ -1,5 +1,6 @@
 """Persistence and weekly display-name refresh for the Do Not Mogi list."""
 import logging
+import re
 from datetime import timedelta
 
 from sqlalchemy import insert, select, update
@@ -8,6 +9,81 @@ from . import config, db, lounge
 from .schema import do_not_mogi_players
 
 log = logging.getLogger("mogi.do_not_mogi")
+
+QUEUE_ENTRY_RE = re.compile(
+    r"^\s*(?P<rank>\d+)\.\s+(?P<name>.+?)\s+"
+    r"\((?P<mmr>[\d,]+)\s+MMR\)\s*(?:\*)?\s*$",
+    re.IGNORECASE,
+)
+
+
+class QueueCheckError(ValueError):
+    """The pasted queue could not identify a usable 12-player room."""
+
+
+def _name_key(name: str) -> str:
+    return " ".join(name.split()).casefold()
+
+
+def check_queue(conn, text: str, own_name: str) -> dict:
+    """Locate the configured player and flag blocked names in the same rank group."""
+    entries = []
+    seen_ranks = set()
+    for line in text.splitlines():
+        match = QUEUE_ENTRY_RE.match(line)
+        if match is None:
+            continue
+        rank = int(match.group("rank"))
+        if rank < 1 or rank in seen_ranks:
+            raise QueueCheckError("Queue ranks must be unique positive numbers")
+        seen_ranks.add(rank)
+        entries.append({
+            "rank": rank,
+            "name": match.group("name").strip(),
+            "mmr": int(match.group("mmr").replace(",", "")),
+        })
+
+    if not entries:
+        raise QueueCheckError("No numbered Lounge queue entries were found")
+
+    own_key = _name_key(own_name)
+    own_entries = [entry for entry in entries if _name_key(entry["name"]) == own_key]
+    if not own_entries:
+        raise QueueCheckError(f"Could not find {own_name} in the pasted queue")
+    if len(own_entries) > 1:
+        raise QueueCheckError(f"Found {own_name} more than once in the pasted queue")
+
+    own_entry = own_entries[0]
+    room_number = (own_entry["rank"] - 1) // 12 + 1
+    first_rank = (room_number - 1) * 12 + 1
+    last_rank = first_rank + 11
+    room = sorted(
+        (entry for entry in entries if first_rank <= entry["rank"] <= last_rank),
+        key=lambda entry: entry["rank"],
+    )
+
+    blocked_by_name = {}
+    for player in list_players(conn):
+        blocked_by_name.setdefault(_name_key(player["name"]), []).append(player)
+
+    matches = []
+    for entry in room:
+        for blocked in blocked_by_name.get(_name_key(entry["name"]), []):
+            matches.append({
+                **entry,
+                "lounge_player_id": blocked["lounge_player_id"],
+                "saved_name": blocked["name"],
+            })
+
+    return {
+        "own_player": own_entry,
+        "room_number": room_number,
+        "first_rank": first_rank,
+        "last_rank": last_rank,
+        "room": room,
+        "matches": matches,
+        "parsed_players": len(entries),
+    }
 
 
 def list_players(conn) -> list[dict]:

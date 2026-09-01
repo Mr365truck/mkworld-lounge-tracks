@@ -1,10 +1,29 @@
 """Do Not Mogi list, Lounge search, and rename refresh tests."""
 import datetime as dt
 
-from sqlalchemy import select, update
+from sqlalchemy import insert, select, update
 
 from app import backup, config, current_mmr, do_not_mogi, lounge
-from app.schema import do_not_mogi_players
+from app.schema import do_not_mogi_players, lounge_mmr_cache
+
+
+QUEUE_SAMPLE = """Queue Closing: August 31, 2026 at 12:55 PM
+Current 12 Player FFA Mogi List:
+25. sturwt (5526 MMR)
+26. SayHarry (5485 MMR)
+27. Insync (4978 MMR)
+28. AM0S (4866 MMR)
+29. panards46 (4823 MMR)
+30. Monsti (4701 MMR)
+31. SmartGuy (4,616 MMR)
+32. Lost_Jad3N (4517 MMR)
+33. PIPOZ (4356 MMR)
+34. wndr (4348 MMR)
+35. Milad (4261 MMR)
+36. Mr365truck (4236 MMR)
+ㅤ
+37. Hennovic (4225 MMR)
+"""
 
 
 def player(player_id=26176, name="Li4z"):
@@ -93,6 +112,55 @@ def test_weekly_refresh_uses_stable_id_and_skips_fresh_rows(
     with engine.connect() as conn:
         stored = conn.execute(select(do_not_mogi_players)).mappings().one()
     assert stored["name"] == "New name"
+
+
+def test_queue_check_alerts_only_for_blocked_players_in_own_room(client, engine):
+    with engine.begin() as conn:
+        conn.execute(insert(lounge_mmr_cache).values(
+            id=1, lounge_player_id=67656, player_name="Mr365truck",
+            mmr=4236, season=3, refreshed_at=config.utcnow(),
+        ))
+        conn.execute(insert(do_not_mogi_players), [
+            {"lounge_player_id": 100, "name": "smartguy"},
+            {"lounge_player_id": 101, "name": "Hennovic"},
+        ])
+
+    response = client.post(
+        "/api/do-not-mogi/check-queue", json={"text": QUEUE_SAMPLE}
+    )
+
+    assert response.status_code == 200
+    body = response.json()
+    assert body["own_player"] == {
+        "rank": 36, "name": "Mr365truck", "mmr": 4236,
+    }
+    assert (body["room_number"], body["first_rank"], body["last_rank"]) == (3, 25, 36)
+    assert [match["name"] for match in body["matches"]] == ["SmartGuy"]
+    assert body["matches"][0]["lounge_player_id"] == 100
+    assert len(body["room"]) == 12
+
+
+def test_queue_check_reports_when_current_player_is_missing(client, engine):
+    with engine.begin() as conn:
+        conn.execute(insert(lounge_mmr_cache).values(
+            id=1, lounge_player_id=67656, player_name="Mr365truck",
+            mmr=4236, season=3, refreshed_at=config.utcnow(),
+        ))
+
+    response = client.post(
+        "/api/do-not-mogi/check-queue",
+        json={"text": "1. Somebody Else (5000 MMR)"},
+    )
+
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Could not find Mr365truck in the pasted queue"
+
+
+def test_do_not_mogi_page_has_queue_paste_checker(client):
+    body = client.get("/do-not-mogi").text
+    assert 'id="queue-paste"' in body
+    assert 'id="check-queue"' in body
+    assert 'id="queue-result"' in body
 
 
 def test_remove_player_and_json_export(client, monkeypatch):

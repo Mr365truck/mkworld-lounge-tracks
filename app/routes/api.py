@@ -9,7 +9,8 @@ import math
 from fastapi import APIRouter, Body, HTTPException, Request
 from sqlalchemy import delete, insert, select, update
 
-from .. import analytics, backup, config, db, do_not_mogi, lounge, queries
+from .. import (analytics, backup, config, current_mmr, db, do_not_mogi,
+                lounge, queries)
 from ..importer import import_text
 from ..matching import load_candidates, search
 from ..schema import (FORMATS, SHORTCUT_STATES, VARIANTS, import_issues, races,
@@ -317,6 +318,32 @@ def do_not_mogi_search(q: str = "", limit: int = 8):
 def do_not_mogi_list():
     with db.read() as conn:
         return {"players": do_not_mogi.list_players(conn)}
+
+
+@router.post("/do-not-mogi/check-queue")
+def check_do_not_mogi_queue(payload: dict = Body(...)):
+    text = payload.get("text")
+    if not isinstance(text, str) or not text.strip():
+        raise HTTPException(400, "queue text is required")
+    if len(text) > 200_000:
+        raise HTTPException(400, "queue text is too large")
+
+    with db.read() as conn:
+        own_name = current_mmr.player_name(conn)
+    if own_name is None:
+        refreshed = current_mmr.refresh()
+        if not refreshed["updated"]:
+            raise HTTPException(
+                503, "Your Lounge name is not cached yet; try again after MMR refresh"
+            )
+        own_name = refreshed["player_name"]
+
+    try:
+        with db.read() as conn:
+            result = do_not_mogi.check_queue(conn, text, own_name)
+    except do_not_mogi.QueueCheckError as exc:
+        raise HTTPException(400, str(exc))
+    return {"ok": True, **result}
 
 
 @router.post("/do-not-mogi", status_code=201)

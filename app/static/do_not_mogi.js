@@ -6,6 +6,9 @@
   const status = document.getElementById('search-status');
   const spinner = document.getElementById('search-spinner');
   const refreshButton = document.getElementById('refresh-names');
+  const queueInput = document.getElementById('queue-paste');
+  const queueButton = document.getElementById('check-queue');
+  const queueResult = document.getElementById('queue-result');
   if (!input || !menu) return;
   const gameLabel = input.dataset.gameLabel || 'MKWorld 12P';
 
@@ -26,6 +29,62 @@
     menu.innerHTML = '';
     menu.classList.add('hidden');
     input.setAttribute('aria-expanded', 'false');
+  }
+
+  function showQueueResult(kind, html) {
+    if (!queueResult) return;
+    queueResult.classList.remove(
+      'hidden', 'border-bad-500/30', 'bg-bad-500/10', 'text-bad-300',
+      'border-warn-500/30', 'bg-warn-500/10', 'text-warn-300',
+      'border-ink-800', 'bg-ink-900/40', 'text-good-400',
+    );
+    const classes = kind === 'bad'
+      ? ['border-bad-500/30', 'bg-bad-500/10', 'text-bad-300']
+      : kind === 'error'
+        ? ['border-warn-500/30', 'bg-warn-500/10', 'text-warn-300']
+        : ['border-ink-800', 'bg-ink-900/40', 'text-good-400'];
+    queueResult.classList.add(...classes);
+    queueResult.innerHTML = html;
+  }
+
+  async function checkQueue() {
+    const text = queueInput?.value.trim();
+    if (!text) {
+      showQueueResult('error', 'Paste a Lounge queue list first.');
+      return;
+    }
+    queueButton.disabled = true;
+    queueButton.textContent = 'Checking…';
+    try {
+      const response = await fetch('/api/do-not-mogi/check-queue', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+      const body = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(body.detail || 'Could not check the queue');
+
+      const room = `Room ${body.room_number} · ranks ${body.first_rank}–${body.last_rank}`;
+      if (body.matches.length) {
+        const names = body.matches.map((player) =>
+          `<strong>${escapeHtml(player.name)}</strong> (#${player.rank}, ${player.mmr.toLocaleString()} MMR)`
+        ).join(', ');
+        showQueueResult(
+          'bad',
+          `<strong>Do not play this room.</strong> ${escapeHtml(room)} includes ${names}.`,
+        );
+      } else {
+        showQueueResult(
+          'good',
+          `<strong>Room is clear.</strong> ${escapeHtml(room)} has no one on your list.`,
+        );
+      }
+    } catch (error) {
+      showQueueResult('error', escapeHtml(error.message || 'Could not check the queue'));
+    } finally {
+      queueButton.disabled = false;
+      queueButton.textContent = 'Check my room';
+    }
   }
 
   function setActive(next) {
@@ -162,6 +221,16 @@
       status.classList.add('text-bad-400');
       refreshButton.disabled = false;
       refreshButton.textContent = 'Refresh names';
+    }
+  });
+
+  queueButton?.addEventListener('click', checkQueue);
+  queueInput?.addEventListener('paste', () => setTimeout(checkQueue, 0));
+  queueInput?.addEventListener('input', () => queueResult?.classList.add('hidden'));
+  queueInput?.addEventListener('keydown', (event) => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+      event.preventDefault();
+      checkQueue();
     }
   });
 })();

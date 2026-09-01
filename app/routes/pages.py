@@ -128,8 +128,10 @@ def shocks_page(request: Request):
 def do_not_mogi_page(request: Request):
     with db.read() as conn:
         players = do_not_mogi.list_players(conn)
+        own_lounge_name = current_mmr.player_name(conn)
     return templates.TemplateResponse(request, "do_not_mogi.html", {
         "players": players,
+        "own_lounge_name": own_lounge_name,
         "refresh_days": config.LOUNGE_NAME_REFRESH_DAYS,
         "lounge_game_label": lounge.game_label(),
         "lounge_profile_url": lounge.profile_url,
